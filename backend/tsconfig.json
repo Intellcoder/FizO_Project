@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
-    "target": "ES2019",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "target": "ES2020",
+    "module": "commonjs",
+    "moduleResolution": "node",
     "baseUrl": "src",
     "rootDir": "./src",
     "strict": true,
@@ -12,10 +12,9 @@
     "outDir": "dist",
     "sourceMap": true,
     "resolveJsonModule": true,
-    "types": ["node"],
+    "types": ["node", "express"],
     "noImplicitAny": true
   },
-
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
 }
