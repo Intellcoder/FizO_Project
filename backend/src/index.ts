@@ -13,7 +13,13 @@ const app: Application = express();
 app.use(express.json({ limit: "10kb" }));
 app.use(express.urlencoded({ extended: true }));
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "https://fizotaggers.onrender.com/", // or your deployed frontend URL
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 //security HTTP headers
 app.use(helmet());
 

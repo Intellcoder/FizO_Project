@@ -123,7 +123,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const res = await api.get(`/team`);
       setTeam(res.data || null);
     } catch (error) {
-      toast.error("failed to fetch profile");
+      //toast.error("failed to fetch profile");
     }
   };
 
@@ -212,6 +212,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (user) {
       getUserProfile();
       fetchReports();
+      console.log(reports);
     }
   }, [user]);
 

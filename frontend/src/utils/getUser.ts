@@ -9,5 +9,8 @@ export const getUserFromLocalstorage = () => {
 };
 
 export const getTokenFromLocalStorage = () => {
-  return localStorage.getItem("token") || null;
+  const token = localStorage.getItem("token") || null;
+  if (!token) return null;
+
+  return JSON.parse(token);
 };
