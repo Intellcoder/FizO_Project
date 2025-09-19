@@ -11,6 +11,8 @@
     "removeComments": true,
     "outDir": "dist",
     "sourceMap": true,
+    "resolveJsonModule": true,
+    "types": ["node"],
     "noImplicitAny": true
   },
 
