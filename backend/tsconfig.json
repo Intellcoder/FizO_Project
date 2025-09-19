@@ -1,28 +1,21 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
+    "target": "ES2019",
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
+    "baseUrl": "src",
     "rootDir": "./src",
-    "outDir": "./dist",
-    "baseUrl": "./src",
-
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-
-    "resolveJsonModule": true,
-    "sourceMap": true,
     "removeComments": true,
+    "outDir": "dist",
+    "sourceMap": true,
+    "resolveJsonModule": true,
+    "types": ["node"],
     "noImplicitAny": true
-
-    /* 
-      🔑 Note: no "types": ["node", "express"]
-      → This way, TypeScript will automatically pick up 
-        @types/node and @types/express when installed.
-    */
   },
+
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
 }
