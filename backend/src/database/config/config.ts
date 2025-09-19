@@ -3,9 +3,7 @@ import { configDotenv } from "dotenv";
 
 configDotenv();
 
-const MONGO_URI =
-  (process.env.MONGODB_URI as string) ||
-  "mongodb://localhost:27017/pollyreport";
+const MONGO_URI = process.env.MONGODB_URI as string;
 const PRODUCTION_MONGO_URI = process.env.PRODUCTION_MONGO_URI as string;
 
 const connectDB = async (): Promise<void> => {
