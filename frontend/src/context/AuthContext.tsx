@@ -110,7 +110,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setReports(res.data || []);
       setTotalTime(res.data.totalSeconds || 0);
       setLoadingReports(false);
-      console.log(reports);
     } catch (error) {
       toast.error("Failed to fetch report");
     } finally {
@@ -188,13 +187,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   //delete a report
   const deleteReport = async (id: string) => {
-    console.log("reportid", id);
     if (user?.role !== "admin") {
       toast.error("Only admins can delete reports");
       return;
     }
     try {
-      console.log("trying to delete report");
       await api.delete(`/report/${id}`);
       toast.success("Report deleted successfully!");
       fetchReports();

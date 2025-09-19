@@ -2,7 +2,7 @@ import axios from "axios";
 import { getTokenFromLocalStorage } from "../utils/getUser";
 
 const api = axios.create({
-  baseURL: "http://localhost:4000/api/v1",
+  baseURL: "https://fizo-backend-api-v1.onrender.com/api/v1/",
 });
 
 api.interceptors.request.use((config) => {
