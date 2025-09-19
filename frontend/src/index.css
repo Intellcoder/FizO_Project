@@ -1,0 +1,37 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #4153ef;
+  --color-grey-100: #4153ef;
+  --color-secondary-blue: #4153ef;
+  --color-background-color: #f9fafb;
+  --color-deep-blue: #3b82f6;
+  --color-solid-blue: #3b82f6;
+  --color-light-gray: #e5e7eb;
+  --color-dark-gray: #1f2937;
+  --color-gradient: linearGradient (135deg, #3b82f6, #ec4899);
+}
+@layer components {
+  .loader {
+    border: 2px solid transparent;
+    border-top-color: white;
+  }
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes bounce {
+  0%,
+  80%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.6;
+  }
+  40% {
+    transform: translateY(-10px);
+    opacity: 1;
+  }
+}
