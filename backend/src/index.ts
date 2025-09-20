@@ -15,7 +15,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(
   cors({
-    origin: "https://fizotaggers.onrender.com", // or your deployed frontend URL
+    origin: ["https://fizotaggers.onrender.com", "http://localhost:5173/"], // or your deployed frontend URL
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })

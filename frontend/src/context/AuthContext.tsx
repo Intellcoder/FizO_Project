@@ -205,7 +205,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   //download excel worksheet
   const excelDownload = async () => {
     try {
-      await api.get(`/report/summary`);
+      window.open("https://your-backend/api/v1/reports/summary", "_blank");
       toast.success("Downloading...");
     } catch (error) {
       toast.error("Failed to download excel report");

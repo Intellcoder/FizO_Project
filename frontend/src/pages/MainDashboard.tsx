@@ -10,11 +10,12 @@ import Report from "./Report";
 import { useAuth } from "../context/AuthContext";
 
 const MainDashboard = () => {
-  const { user, reports, totalTime, excelDownload } = useAuth();
+  const { user, reports, totalTime, excelDownload, loadingReports } = useAuth();
 
   let hours, minutes, sec;
 
   const formatSeconds = (seconds?: number | null) => {
+    if (loadingReports) return "Calculating...";
     if (!seconds || seconds <= 0) return "0 hrs 0 mins 0 secs";
 
     hours = Math.floor(seconds / 3600);
