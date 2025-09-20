@@ -8,7 +8,7 @@ import { MdLockClock } from "react-icons/md";
 import { MdMoreVert } from "react-icons/md";
 import Report from "./Report";
 import { useAuth } from "../context/AuthContext";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import CountUp from "react-countup";
 import Loader from "../components/Loader";
 
