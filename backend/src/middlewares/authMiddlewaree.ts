@@ -13,6 +13,7 @@ export default async function authMiddleware(
   next: NextFunction
 ) {
   try {
+    console.log(req.body);
     const token = req.headers.authorization?.split(" ")[1];
     console.log(token);
 
