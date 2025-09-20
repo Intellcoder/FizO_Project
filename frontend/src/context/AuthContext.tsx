@@ -70,6 +70,7 @@ type AuthContextType = {
   setTotalTime: (totals: TotalProps) => void;
   loadingReports: boolean;
   refreshReports: () => Promise<void>;
+  excelDownload: () => void;
   uploadReport: (
     file: File,
     options: any,
@@ -89,6 +90,7 @@ const AuthContext = createContext<AuthContextType>({
   setTotalTime: async () => {},
   loading: true,
   loadingReports: false,
+  excelDownload: async () => {},
   refreshReports: async () => {},
   uploadReport: async () => {},
   editReport: async () => {},
@@ -199,6 +201,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       toast.error("Failed to delete report");
     }
   };
+
+  //download excel worksheet
+  const excelDownload = async () => {
+    try {
+      await api.get(`/report/summary`);
+      toast.success("Downloading...");
+    } catch (error) {
+      toast.error("Failed to download excel report");
+    }
+  };
   useEffect(() => {
     const storedUser = getUserFromLocalstorage();
     if (storedUser) {
@@ -227,6 +239,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         progress: 0,
         totalTime,
         setTotalTime,
+        excelDownload,
         loadingReports,
         refreshReports: fetchReports,
         uploadReport,

@@ -131,6 +131,7 @@ const DataTable = () => {
             height: 500,
             width: "auto",
             overflowX: "100%",
+            padding: "1rem",
           }}
         >
           <Box sx={{ minWidth: "900px" }}>

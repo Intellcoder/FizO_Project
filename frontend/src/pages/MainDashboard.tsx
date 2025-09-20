@@ -10,7 +10,7 @@ import Report from "./Report";
 import { useAuth } from "../context/AuthContext";
 
 const MainDashboard = () => {
-  const { user, reports, totalTime } = useAuth();
+  const { user, reports, totalTime, excelDownload } = useAuth();
 
   let hours, minutes, sec;
 
@@ -40,7 +40,10 @@ const MainDashboard = () => {
               <img src={bannerimage} alt="welcome image " className="h-full" />
             </div>
             <div className="flex flex-col justify-evenly pt-3 pb-3">
-              <button className="bg-solid-blue m-4 md:m-0   text-center text-nowrap text-white py-2 px-4 rounded-lg">
+              <button
+                className="bg-solid-blue m-4 md:m-0  cursor-pointer text-center text-nowrap text-white py-2 px-4 rounded-lg"
+                onClick={excelDownload}
+              >
                 Download Report
               </button>
               <button className="bg-white m-4 md:m-0 text-solid-blue py-2 px-4 rounded-lg">

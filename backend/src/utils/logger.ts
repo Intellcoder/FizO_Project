@@ -2,6 +2,17 @@ import { Request, Response } from "express";
 import ExcelJS from "exceljs";
 import Report from "../database/models/report.model";
 
+function formatTime(totalSeconds: number): string {
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  return [
+    hours.toString().padStart(2, "0"),
+    minutes.toString().padStart(2, "0"),
+    seconds.toString().padStart(2, "0"),
+  ].join(":");
+}
 export const exportSummaryReport = async (req: Request, res: Response) => {
   try {
     const grouped = await Report.aggregate([
@@ -42,8 +53,12 @@ export const exportSummaryReport = async (req: Request, res: Response) => {
       const date = g._id.date;
       const emp = g.worker.name;
       const hours = g.totalSeconds / 3600;
-      pivot[date][emp] = hours;
+      pivot[date][emp] = g.totalSeconds;
     });
+
+    //track totals per employee
+    const totals: Record<string, number> = {};
+    employees.forEach((e) => (totals[e] = 0));
 
     // Excel
     const workbook = new ExcelJS.Workbook();
@@ -52,11 +67,19 @@ export const exportSummaryReport = async (req: Request, res: Response) => {
     // Header row
     sheet.addRow(["Date", ...employees]);
 
-    // Data rows
+    // Data rows per date
     dates.forEach((d) => {
-      sheet.addRow([d, ...employees.map((e) => pivot[d][e])]);
+      const rowData = employees.map((e) => {
+        const secs = pivot[d][e];
+        totals[e] += secs; // accumulate total
+        return formatTime(secs); // format for display
+      });
+      sheet.addRow([d, ...rowData]);
     });
 
+    // Totals row
+    const totalRow = employees.map((e) => formatTime(totals[e]));
+    sheet.addRow(["Total", ...totalRow]);
     // Stream Excel to response
     res.setHeader(
       "Content-Type",
