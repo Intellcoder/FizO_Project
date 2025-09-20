@@ -83,84 +83,90 @@ const MainDashboard = () => {
             <h1 className=" text-xl font-medium mb-3">Account Details</h1>
             <MdMoreVert className="text-[30px] bg-gray-300 font-black rounded-lg " />
           </div>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="grid md:grid-cols-2 p-2 mb-3 "
-          >
-            <Container
-              icon={<MdLockClock color="green" />}
-              backgroundColor="solid-blue"
-              title="Total Hours:"
-              iconColor="green-500"
-              textColor="gray-300"
-              backgroundColor2="white"
-              value={
-                loadingReports ? (
-                  <Loader />
-                ) : (
-                  <CountUp
-                    start={0}
-                    end={totalTime?.totalSeconds ?? 0}
-                    duration={2}
-                    formattingFn={formatSeconds}
-                  />
-                )
-              }
-              icon2={<FiArrowUpRight />}
-            />
-          </motion.div>
+          <div className="grid md:grid-cols-2 p-2 mb-3">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="grid md:grid-cols-2 p-2 mb-3"
+            >
+              <Container
+                icon={<MdLockClock color="green" />}
+                backgroundColor="solid-blue"
+                title="Total Hours:"
+                iconColor="green-500"
+                textColor="gray-300"
+                backgroundColor2="white"
+                value={
+                  loadingReports ? (
+                    <Loader />
+                  ) : (
+                    <CountUp
+                      start={0}
+                      end={totalTime?.totalSeconds ?? 0}
+                      duration={2}
+                      formattingFn={formatSeconds}
+                    />
+                  )
+                }
+                icon2={<FiArrowUpRight />}
+              />
+            </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.6 }}
-          >
-            <Container
-              icon={<MdTaskAlt />}
-              backgroundColor="gray-200"
-              title={`Total Task:`}
-              textColor="black"
-              iconColor="primary"
-              value={<CountUp start={0} end={800} duration={2} separator="," />}
-              icon2={<FiArrowUpRight />}
-              backgroundColor2="white"
-            />
-          </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4, duration: 0.6 }}
+            >
+              <Container
+                icon={<MdTaskAlt />}
+                backgroundColor="gray-200"
+                title={`Total Task:`}
+                textColor="black"
+                iconColor="primary"
+                value={
+                  <CountUp start={0} end={800} duration={2} separator="," />
+                }
+                icon2={<FiArrowUpRight />}
+                backgroundColor2="white"
+              />
+            </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.6 }}
-          >
-            <Container
-              icon={<FaGlobeAfrica />}
-              backgroundColor="gray-200"
-              title="Locale:"
-              textColor="black"
-              iconColor="primary"
-              value={user?.locale || ""}
-              icon2={<FiArrowUpRight />}
-              backgroundColor2="white"
-            />
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.6 }}
-          >
-            <Container
-              icon={<MdReport />}
-              backgroundColor="gray-200"
-              title="Reports Submitted:"
-              textColor="black"
-              iconColor="primary"
-              value={<CountUp start={0} end={reports.length} duration={1.5} />}
-              icon2={<FiArrowUpRight />}
-              backgroundColor2="white"
-            />
-          </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4, duration: 0.6 }}
+            >
+              <Container
+                icon={<FaGlobeAfrica />}
+                backgroundColor="gray-200"
+                title="Locale:"
+                textColor="black"
+                iconColor="primary"
+                value={user?.locale || ""}
+                icon2={<FiArrowUpRight />}
+                backgroundColor2="white"
+              />
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4, duration: 0.6 }}
+            >
+              <Container
+                icon={<MdReport />}
+                backgroundColor="gray-200"
+                title="Reports Submitted:"
+                textColor="black"
+                iconColor="primary"
+                value={
+                  <CountUp start={0} end={reports.length} duration={1.5} />
+                }
+                icon2={<FiArrowUpRight />}
+                backgroundColor2="white"
+              />
+            </motion.div>
+          </div>
         </div>
       </div>
     </motion.div>
