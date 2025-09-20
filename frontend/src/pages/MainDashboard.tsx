@@ -8,6 +8,9 @@ import { MdLockClock } from "react-icons/md";
 import { MdMoreVert } from "react-icons/md";
 import Report from "./Report";
 import { useAuth } from "../context/AuthContext";
+import { motion, AnimatePresence } from "framer-motion";
+import CountUp from "react-countup";
+import Loader from "../components/Loader";
 
 const MainDashboard = () => {
   const { user, reports, totalTime, excelDownload, loadingReports } = useAuth();
@@ -25,10 +28,19 @@ const MainDashboard = () => {
   };
 
   return (
-    <div>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
       <div className="grid lg:grid-cols-[55%_45%] md:gap-3 pt-[3%] md:px-[1%] mb-6">
         <div>
-          <div className="grid md:grid-cols-[45%_30%_25%] bg-light-gray m-3 mb-6 mt-0 p-3 rounded-lg  pb-3 place-content-center-safe">
+          <motion.div
+            initial={{ y: -20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.6 }}
+            className="grid md:grid-cols-[45%_30%_25%] bg-light-gray m-3 mb-6 mt-0 p-3 rounded-lg  pb-3 place-content-center-safe"
+          >
             {/*welcome banner*/}
             <div className="flex-1 pt-5 pl-3 items-center">
               <h1 className="text-xl md:text-3xl text-start font-medium">
@@ -41,17 +53,23 @@ const MainDashboard = () => {
               <img src={bannerimage} alt="welcome image " className="h-full" />
             </div>
             <div className="flex flex-col justify-evenly pt-3 pb-3">
-              <button
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 className="bg-solid-blue m-4 md:m-0  cursor-pointer text-center text-nowrap text-white py-2 px-4 rounded-lg"
                 onClick={excelDownload}
               >
                 Download Report
-              </button>
-              <button className="bg-white m-4 md:m-0 text-solid-blue py-2 px-4 rounded-lg">
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="bg-white m-4 md:m-0 text-solid-blue py-2 px-4 rounded-lg"
+              >
                 View Worksheet
-              </button>
+              </motion.button>
             </div>
-          </div>
+          </motion.div>
           <div className="p-2 mt-5 w-full">
             {/*upload File*/}
 
@@ -65,7 +83,12 @@ const MainDashboard = () => {
             <h1 className=" text-xl font-medium mb-3">Account Details</h1>
             <MdMoreVert className="text-[30px] bg-gray-300 font-black rounded-lg " />
           </div>
-          <div className="grid md:grid-cols-2 p-2 mb-3 ">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="grid md:grid-cols-2 p-2 mb-3 "
+          >
             <Container
               icon={<MdLockClock color="green" />}
               backgroundColor="solid-blue"
@@ -73,19 +96,44 @@ const MainDashboard = () => {
               iconColor="green-500"
               textColor="gray-300"
               backgroundColor2="white"
-              value={formatSeconds(totalTime?.totalSeconds ?? 0)}
+              value={
+                loadingReports ? (
+                  <Loader />
+                ) : (
+                  <CountUp
+                    start={0}
+                    end={totalTime?.totalSeconds ?? 0}
+                    duration={2}
+                    formattingFn={formatSeconds}
+                  />
+                )
+              }
               icon2={<FiArrowUpRight />}
             />
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4, duration: 0.6 }}
+          >
             <Container
               icon={<MdTaskAlt />}
               backgroundColor="gray-200"
               title={`Total Task:`}
               textColor="black"
               iconColor="primary"
-              value={"800"}
+              value={<CountUp start={0} end={800} duration={2} separator="," />}
               icon2={<FiArrowUpRight />}
               backgroundColor2="white"
             />
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4, duration: 0.6 }}
+          >
             <Container
               icon={<FaGlobeAfrica />}
               backgroundColor="gray-200"
@@ -96,20 +144,26 @@ const MainDashboard = () => {
               icon2={<FiArrowUpRight />}
               backgroundColor2="white"
             />
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4, duration: 0.6 }}
+          >
             <Container
               icon={<MdReport />}
               backgroundColor="gray-200"
               title="Reports Submitted:"
               textColor="black"
               iconColor="primary"
-              value={String(reports.length)}
+              value={<CountUp start={0} end={reports.length} duration={1.5} />}
               icon2={<FiArrowUpRight />}
               backgroundColor2="white"
             />
-          </div>
+          </motion.div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

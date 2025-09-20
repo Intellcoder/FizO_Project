@@ -6,7 +6,7 @@ type Props = {
   backgroundColor?: string;
   backgroundColor2?: string;
   title: string;
-  value: string;
+  value: React.ReactNode;
   textColor: string;
   iconColor: string;
 };
