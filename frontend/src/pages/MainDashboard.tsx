@@ -88,7 +88,6 @@ const MainDashboard = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
-              className="grid md:grid-cols-2 p-2 mb-3"
             >
               <Container
                 icon={<MdLockClock color="green" />}
