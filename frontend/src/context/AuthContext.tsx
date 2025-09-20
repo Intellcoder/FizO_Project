@@ -206,7 +206,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const excelDownload = async () => {
     try {
       window.open(
-        "https://fizo-backend-api-v1.onrender.com/api/v1/reports/summary",
+        "https://fizo-backend-api-v1.onrender.com/api/v1/report/summary",
         "_blank"
       );
       toast.success("Downloading...");
