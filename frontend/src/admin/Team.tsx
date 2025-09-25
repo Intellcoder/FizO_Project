@@ -16,11 +16,6 @@ type SignUpFormInput = {
   status: "Active" | "Non-Active";
 };
 
-const {
-  register,
-  handleSubmit,
-  formState: { errors },
-} = useForm<SignUpFormInput>();
 
 function stringToColor(string: string) {
   let hash = 0;
@@ -52,7 +47,14 @@ function stringAvatar(name: string) {
 }
 
 const Team = () => {
+
   const { team } = useAuth();
+
+  const {
+  register,
+  handleSubmit,
+  formState: { errors },
+} = useForm<SignUpFormInput>();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);

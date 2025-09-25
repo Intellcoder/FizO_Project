@@ -2,6 +2,7 @@ import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
 import { BiBell, BiSearch } from "react-icons/bi";
 import { FaPhoenixSquadron } from "react-icons/fa";
+import { IoMenu } from "react-icons/io5";
 
 const Header = () => {
   function stringToColor(string: string) {
@@ -58,11 +59,14 @@ const Header = () => {
         <div className=" rounded-full border-1 p-1 hidden md:flex">
           <BiBell size={40} />
         </div>
-        <div className="flex items-center">
+      
+        <div className=" items-center flex">
+          
           {/*avartar*/}
           <Avatar {...stringAvatar(formattedName)} />
           <p className="ml-2 text-xl font-medium">{formattedName}</p>
         </div>
+         
       </div>
     </div>
   );

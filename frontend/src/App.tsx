@@ -8,38 +8,47 @@ import Team from "./admin/Team";
 import Reports from "./pages/Reports";
 import Payroll from "./admin/Payroll";
 import Analytics from "./admin/Analytics";
-import LogoutButton from "./components/Logout";
 import ClientLayout from "./client/ClientLayout";
 import ReportPage from "./client/Report";
 import Layout from "./user/Layout";
 import DashBoard from "./user/DashBoard";
 import Payment from "./pages/Payroll";
+import ProtectedRoute from "./components/ProtectedRoute";
+import Unauthorized from "./pages/Unauthorized";
+import SettingsPage from "./pages/Settings";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route element={<ProtectedRoute allowedRoles={["worker"]}/>}></Route>
         <Route element={<Layout />} path="/">
           <Route element={<DashBoard />} index />
           <Route element={<Reports />} path="/report" />
           <Route element={<Payment />} path="/payment" />
           <Route element={<EmployeeAnalytics />} path="/data" />
+          <Route element={<SettingsPage />} path="/settings" />
         </Route>
-        <Route path="*" element={<Login />} />
+     
+   
 
         <Route element={<SignUp />} path="/signup" />
         <Route element={<Login />} path="/login" />
+        <Route element={<ProtectedRoute allowedRoles={["admin"]}/>}>
         <Route element={<AdminLayout />} path="/admin">
           <Route element={<AdminDashBoard />} index />
           <Route element={<Team />} path="team" />
           <Route element={<Reports />} path="report" />
           <Route element={<Payroll />} path="payroll" />
           <Route element={<Analytics />} path="analytics" />
-          <Route element={<LogoutButton />} path="auth" />
+        <Route element={<SettingsPage />} path="/admin/settings" />
         </Route>
+         </Route>
         <Route element={<ClientLayout />} path="/client">
           <Route element={<ReportPage />} path="client" />
         </Route>
+        <Route path="*" element={<Login />} />
+        <Route path="/unauthorized" element={<Unauthorized />} />
       </Routes>
     </BrowserRouter>
   );

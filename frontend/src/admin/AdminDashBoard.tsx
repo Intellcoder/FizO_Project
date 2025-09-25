@@ -9,7 +9,7 @@ import TableCard from "../components/TableCard";
 import Loader from "../components/Loader";
 
 const AdminDashBoard = () => {
-  const { loadingReports, totalTime } = useAuth();
+  const { loadingReports, totalTime,reports ,team} = useAuth();
 
   let hours, minutes, sec;
 
@@ -58,7 +58,7 @@ const AdminDashBoard = () => {
           <StatsCard
             title="Total Submitted Reports"
             icon={<MdLockClock color="green" />}
-            value="800"
+            value={reports.length.toString()}
           />
         </motion.div>
         <motion.div
@@ -70,7 +70,7 @@ const AdminDashBoard = () => {
           <StatsCard
             title="No of Employees"
             icon={<MdLockClock color="green" />}
-            value="800"
+            value={team.length.toString()}
           />
         </motion.div>
         <motion.div
@@ -80,9 +80,9 @@ const AdminDashBoard = () => {
           className="h-full"
         >
           <StatsCard
-            title="Total Submitted Reports"
+            title="Cycle:"
             icon={<MdLockClock color="green" />}
-            value="800"
+            value="2"
           />
         </motion.div>
       </div>

@@ -124,8 +124,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   //get userProlfe
   const getUserProfile = async () => {
     try {
-      const res = await api.get(`/team`);
-      setTeam(res.data || null);
+      // const res = await api.get(`/team`);
+      // setTeam(res.data || null);
     } catch (error) {
       //toast.error("failed to fetch profile");
     }

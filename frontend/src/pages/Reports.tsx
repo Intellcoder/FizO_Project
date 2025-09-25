@@ -30,12 +30,12 @@ type Report = {
 // Sample Reports
 
 export default function ReportPage() {
-  const { reports } = useAuth();
+  const { reports, excelDownload} = useAuth();
   const [selected, setSelected] = useState<Report | null>(null);
   const [isFormOpen, setIsFormOpened] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
-  console.log(reports);
+  
   return (
     <div className="p-6 space-y-8">
       {/* Header */}
@@ -43,9 +43,9 @@ export default function ReportPage() {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="flex items-center justify-between"
+        className="flex flex-col md:flex-row  items-center justify-between"
       >
-        <h1 className="text-2xl font-bold">Reports</h1>
+        <h1 className="text-2xl font-bold mb-5 md:mb-0">Reports</h1>
         <div className="flex gap-3">
           <button
             onClick={() => setIsFormOpened(!isFormOpen)}
@@ -53,7 +53,9 @@ export default function ReportPage() {
           >
             + Add New Report
           </button>
-          <button className="px-4 py-2 border-1 cursor-pointer rounded-lg hover:bg-white transition">
+          <button 
+           onClick={excelDownload}
+          className="px-4 py-2 border-1 cursor-pointer rounded-lg hover:bg-white transition">
             Export CSV
           </button>
         </div>

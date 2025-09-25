@@ -72,7 +72,7 @@ const AdminDashBoard = () => {
           <StatsCard
             title="Locale"
             icon={<MdLockClock color="green" />}
-            value={user!.locale}
+            value={user?.locale ?? "N/A"}
           />
         </motion.div>
         <motion.div
@@ -95,11 +95,20 @@ const AdminDashBoard = () => {
       <div className="mt-4">
         <TableCard
           title="Recent Reports submitted"
-          header={["Name", "Email", "Date"]}
-          rows={[
-            ["Jane Doe", "Jane@gmail.com", "2025-09-22"],
-            ["John Smith", "john@gmail.com", "2025-09-21"],
-          ]}
+          header={["Name", "WorkHour", "Date"]}
+ rows={
+      [...reports] // copy so original array isn’t mutated
+        .sort(
+          (a, b) =>
+            new Date(b.date).getTime() - new Date(a.date).getTime()
+        )
+        .slice(0, 3) // only first 3
+        .map((r) => [
+          r.name,
+          r.workhour, // or r.workhour if you want instead of email
+          new Date(r.date).toLocaleDateString(),
+        ])
+    }
         />
       </div>
     </>

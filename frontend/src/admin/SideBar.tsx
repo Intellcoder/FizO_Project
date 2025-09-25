@@ -32,7 +32,7 @@ const navItem = [
   {
     icon: <MdSettings />,
     text: "Settings",
-    to: "/",
+    to: "/admin/settings",
   },
   {
     icon: <IoLogOut />,

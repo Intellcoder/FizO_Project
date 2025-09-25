@@ -1,17 +1,22 @@
-import type { JSX } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 type ProtectedRouteProps = {
-  children: JSX.Element;
+  allowedRoles: string[];
 };
 
-const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
-  const token = localStorage.getItem("token");
+const ProtectedRoute = ({ allowedRoles }: ProtectedRouteProps) => {
+  const { user } = useAuth();
 
-  if (!token) {
-    return <Navigate to={"/login"} replace />;
+  if (!user) {
+    return <Navigate to="/login" replace />;
   }
-  return children;
+
+  if (!allowedRoles.includes(user.role)) {
+    return <Navigate to="/unauthorized" replace />;
+  }
+
+  return <Outlet />; // renders the nested routes
 };
 
 export default ProtectedRoute;
