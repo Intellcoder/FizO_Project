@@ -33,16 +33,17 @@ function App() {
     
 
         {/*Admin routes*/}
-        <Route element={<ProtectedRoute allowedRoles={["admin"]}/>}>
+     <Route element={<ProtectedRoute allowedRoles={["admin"]}/>}>
         <Route element={<AdminLayout />} path="/admin">
           <Route element={<AdminDashBoard />} index />
           <Route element={<Team />} path="team" />
-          <Route element={<AdminReport />} path="report" />
+          <Route element={<AdminReport />} path="reports" />
           <Route element={<Payroll />} path="payroll" />
           <Route element={<Analytics />} path="analytics" />
-        <Route element={<SettingsPage />} path="/admin/settings" />
+        <Route element={<SettingsPage />} path="settings" />
         </Route>
         </Route>
+        
       
 
          {/*Client routes*/}

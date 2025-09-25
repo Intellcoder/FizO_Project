@@ -142,12 +142,16 @@ export default function AdminReport() {
                   </span>
                 </td>
                 <td className="px-6 py-3 flex gap-2">
-                  <button
-                    onClick={() => setSelected(r)}
-                    className="text-blue-600 underline"
-                  >
-                    View
-                  </button>
+<button
+  onClick={() => {
+    setSelected(r);
+    setIsOpen(true);
+  }}
+  className="text-blue-600 underline"
+>
+  View
+</button>
+
                   {user?.role === "worker" && (
                     <>
                       <button
@@ -277,6 +281,55 @@ export default function AdminReport() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* 🔹 View Modal */}
+<AnimatePresence>
+  {isOpen && selected && (
+    <motion.div
+      className="fixed inset-0 flex items-center justify-center bg-black/50 z-50"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
+      <motion.div
+        className="bg-white p-6 rounded-xl w-full max-w-lg"
+        initial={{ scale: 0.9 }}
+        animate={{ scale: 1 }}
+        exit={{ scale: 0.9 }}
+      >
+        <h2 className="text-xl font-bold mb-4">Report Details</h2>
+        <p><strong>Employee:</strong> {selected.name}</p>
+        <p><strong>Locale:</strong> {selected.locale}</p>
+        <p><strong>Date:</strong> {selected.date.toString().substring(0, 10)}</p>
+        <p><strong>Work Hours:</strong> {selected.workhour}</p>
+        <p><strong>Worked By:</strong> {selected.accountWorker?.name}</p>
+        <p>
+          <strong>Status:</strong>{" "}
+          {selected.isOutsourced ? "Outsourced" : "In-house"}
+        </p>
+
+        {/* Image preview */}
+        {selected.imageUrl && (
+          <img
+            src={selected.imageUrl}
+            alt="Report"
+            className="mt-4 rounded-lg border"
+          />
+        )}
+
+        <div className="flex justify-end mt-6">
+          <button
+            onClick={() => setIsOpen(false)}
+            className="px-4 py-2 bg-gray-200 rounded"
+          >
+            Close
+          </button>
+        </div>
+      </motion.div>
+    </motion.div>
+  )}
+</AnimatePresence>
+
 
       {/* 🔹 Add Report Form */}
       <AnimatePresence>

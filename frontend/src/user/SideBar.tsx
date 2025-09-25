@@ -1,12 +1,10 @@
 import { IoLogOut } from "react-icons/io5";
-import { MdPayments } from "react-icons/md";
+import { MdPayments, MdArticle, MdDashboard, MdSettings } from "react-icons/md";
+import { SiGoogleanalytics } from "react-icons/si";
 import { useState } from "react";
 import { IoMdMenu } from "react-icons/io";
-import { MdArticle, MdDashboard, MdSettings } from "react-icons/md";
-import { Link, useNavigate } from "react-router-dom";
-import { SiGoogleanalytics } from "react-icons/si";
-
-import toast ,{Toaster} from "react-hot-toast";
+import { NavLink, useNavigate } from "react-router-dom";
+import toast, { Toaster } from "react-hot-toast";
 
 const navItem = [
   { icon: <MdDashboard />, text: "DashBoard", to: "/" },
@@ -24,25 +22,19 @@ const SideBar = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    // Perform actual logout logic here (e.g., clearing tokens, context, etc.)
-    // For now, just navigate to login/admin page
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    toast.success("Logged out successfully!");
     setShowLogoutModal(false);
-      localStorage.removeItem("token");
-  localStorage.removeItem("user");
-  toast.success("Logged out successfully!");
-
-  setTimeout(() => {
-    navigate("/login");
-  }, 2000);
-   
+    setTimeout(() => navigate("/login"), 1500);
   };
 
   return (
     <>
-      {/* Sidebar for large screens */}
       <Toaster position="top-center" reverseOrder={false} />
+      {/* Sidebar for large screens */}
       <div
-        className={`md:flex flex-col bg-primary transition-all duration-300  ${
+        className={`md:flex flex-col bg-primary transition-all duration-300 ${
           isOpen ? "w-56" : "w-12 md:w-20"
         }`}
       >
@@ -53,14 +45,21 @@ const SideBar = () => {
           >
             <IoMdMenu size={35} />
           </button>
+
           <nav className="flex-1 space-y-2 mt-4 mb-2">
             {navItem.map((item, index) => (
-              <Link
+              <NavLink
                 to={item.to}
                 key={index}
-                className="flex items-center gap-3 mt-10 mb-10 px-2 py-2 rounded-lg text-white text-2xl hover:bg-white hover:text-primary"
+                className={({ isActive }) =>
+                  `flex items-center gap-3 mt-10 mb-10 px-2 py-2 rounded-lg text-2xl transition ${
+                    isActive
+                      ? "bg-white text-primary font-semibold shadow"
+                      : "text-white hover:bg-white hover:text-primary"
+                  }`
+                }
               >
-                {item.icon}
+                <span className="text-2xl">{item.icon}</span>
                 <span
                   className={`transition-opacity duration-300 text-xl font-medium ${
                     isOpen ? "opacity-100" : "opacity-0 hidden"
@@ -68,10 +67,10 @@ const SideBar = () => {
                 >
                   {item.text}
                 </span>
-              </Link>
+              </NavLink>
             ))}
 
-            {/* Logout Button - opens modal */}
+            {/* Logout */}
             <button
               onClick={() => setShowLogoutModal(true)}
               className="flex items-center gap-3 mt-10 mb-10 px-2 py-2 rounded-lg text-white text-2xl hover:bg-white hover:text-primary w-full"
@@ -102,20 +101,26 @@ const SideBar = () => {
         </div>
         <nav className="space-y-2 mt-4">
           {navItem.map((item, index) => (
-            <Link
+            <NavLink
               to={item.to}
               key={index}
-              className="flex items-center gap-3 p-2 text-white text-xl"
+              className={({ isActive }) =>
+                `flex items-center gap-3 p-2 text-xl transition ${
+                  isActive
+                    ? "bg-white text-primary font-semibold shadow"
+                    : "text-white hover:bg-white hover:text-primary"
+                }`
+              }
             >
               {item.icon}
               <span>{item.text}</span>
-            </Link>
+            </NavLink>
           ))}
 
           {/* Logout for mobile */}
           <button
             onClick={() => setShowLogoutModal(true)}
-            className="flex items-center gap-3 p-2 text-white text-xl w-full"
+            className="flex items-center gap-3 p-2 text-white text-xl w-full hover:bg-white hover:text-primary"
           >
             <IoLogOut />
             <span>Log out</span>
@@ -123,7 +128,7 @@ const SideBar = () => {
         </nav>
       </div>
 
-      {/* Logout Confirmation Modal */}
+      {/* Logout Modal */}
       {showLogoutModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg w-[90%] max-w-md">
