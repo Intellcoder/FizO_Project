@@ -48,7 +48,7 @@ const AdminDashBoard = () => {
           <StatsCard
             title="Total Hours Worked"
             icon={<MdLockClock color="green" />}
-            value={formatSeconds(totalTime?.totalSeconds).toString()}
+            value={formatSeconds(user?.totalSeconds).toString()}
           />
         </motion.div>
         <motion.div

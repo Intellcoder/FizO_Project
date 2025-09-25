@@ -4,7 +4,7 @@ export default function SettingsPage() {
   const [active, setActive] = useState("profile");
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
+    <div className="p-6 max-w-4xl mx-auto min-h-screen">
       <h1 className="text-2xl font-bold mb-2">Settings</h1>
       <p className="text-gray-500 mb-6">
         Manage your account preferences and application settings.

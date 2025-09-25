@@ -38,16 +38,18 @@ const Header = () => {
 
   return (
     <div className="bg-white p-3 flex justify-between items-center shadow-xl box-border">
-      <div className="flex items-center">
+      <div className="flex items-center text-[12px]">
         <span className="mr-2">
           <FaPhoenixSquadron size={25} className="text-primary" />
         </span>
-        <Typography sx={{ fontWeight: 500, fontSize: "2rem" }}>
-          FizO
-          <span className="text-primary">Taggers</span>
+        <Typography sx={{ fontWeight: 500, fontSize: "2rem" }} >
+         <span className="text-[20px] md:text-3xl">
+           FizO
+         </span>
+          <span className="text-primary text-sm md:text-3xl">Taggers</span>
         </Typography>
       </div>
-      <div className="flex  justify-between  w-[40%]">
+      <div className="flex  justify-between xl:w-[40%]  md:w-[60%]">
         <div className="hidden md:flex border-1 box rounded-full items-center  px-2  shadow-2xl">
           <input
             type="text"
@@ -60,11 +62,11 @@ const Header = () => {
           <BiBell size={40} />
         </div>
       
-        <div className=" items-center flex">
+        <div className=" items-center flex ">
           
           {/*avartar*/}
-          <Avatar {...stringAvatar(formattedName)} />
-          <p className="ml-2 text-xl font-medium">{formattedName}</p>
+          <Avatar {...stringAvatar(formattedName)} sizes="sm" />
+          <p className="ml-2 md:text-xl font-medium text-sm">{formattedName}</p>
         </div>
          
       </div>
