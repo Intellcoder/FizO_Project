@@ -83,7 +83,7 @@ const Analytics = () => {
               <XAxis dataKey="name" />
               <YAxis />
               <Tooltip />
-              <Bar dataKey="hours" fill="#4153ef" radius={[6, 6, 0, 0]} />
+              <Bar dataKey="value" fill="#4153ef" radius={[6, 6, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </motion.div>

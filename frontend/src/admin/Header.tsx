@@ -46,7 +46,7 @@ const Header = () => {
           <span className="text-primary">Taggers</span>
         </Typography>
       </div>
-      <div className="flex  justify-between  w-[30%]">
+      <div className="flex  justify-between  w-[40%]">
         <div className="hidden md:flex border-1 box rounded-full items-center  px-2  shadow-2xl">
           <input
             type="text"
@@ -55,7 +55,7 @@ const Header = () => {
           />
           <BiSearch />
         </div>
-        <div className=" rounded-full border-1 p-1 hidden md:flex">
+        <div className=" rounded-full border-1 p-1 mx-2 hidden md:flex">
           <BiBell size={40} />
         </div>
         <div className="flex items-center">

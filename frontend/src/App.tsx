@@ -16,6 +16,7 @@ import Payment from "./pages/Payroll";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Unauthorized from "./pages/Unauthorized";
 import SettingsPage from "./pages/Settings";
+import AdminReport from "./admin/AdminReport";
 
 function App() {
   return (
@@ -29,26 +30,31 @@ function App() {
           <Route element={<EmployeeAnalytics />} path="/data" />
           <Route element={<SettingsPage />} path="/settings" />
         </Route>
-     
-   
+    
 
-        <Route element={<SignUp />} path="/signup" />
-        <Route element={<Login />} path="/login" />
+        {/*Admin routes*/}
         <Route element={<ProtectedRoute allowedRoles={["admin"]}/>}>
         <Route element={<AdminLayout />} path="/admin">
           <Route element={<AdminDashBoard />} index />
           <Route element={<Team />} path="team" />
-          <Route element={<Reports />} path="report" />
+          <Route element={<AdminReport />} path="report" />
           <Route element={<Payroll />} path="payroll" />
           <Route element={<Analytics />} path="analytics" />
         <Route element={<SettingsPage />} path="/admin/settings" />
         </Route>
-         </Route>
+        </Route>
+      
+
+         {/*Client routes*/}
         <Route element={<ClientLayout />} path="/client">
           <Route element={<ReportPage />} path="client" />
         </Route>
+
+
         <Route path="*" element={<Login />} />
         <Route path="/unauthorized" element={<Unauthorized />} />
+         <Route element={<SignUp />} path="/signup" />
+        <Route element={<Login />} path="/login" />
       </Routes>
     </BrowserRouter>
   );

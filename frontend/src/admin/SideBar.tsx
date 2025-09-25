@@ -47,7 +47,7 @@ const SideBar = () => {
   return (
     <>
       <div
-        className={`hidden md:flex flex-col bg-primary transition-all duration-300 h-screen ${
+        className={` md:flex flex-col bg-primary transition-all duration-300  ${
           isOpen ? "w-56" : "w-20"
         }`}
       >

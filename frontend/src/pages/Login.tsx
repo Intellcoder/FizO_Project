@@ -115,9 +115,9 @@ const Login = () => {
               </div>
               <div className="pt-5">
                 <h1 className=" text-end">
-                  Don't have an account{" "}
+                  Forgot password{" "}
                   <Link className="text-primary font-bold" to={"/signup"}>
-                    Sign up
+                    Reset Password
                   </Link>
                 </h1>
               </div>

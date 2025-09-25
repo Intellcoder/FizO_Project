@@ -24,7 +24,7 @@ const AdminDashBoard = () => {
           </div>
         </div>
       );
-    if (!seconds || seconds <= 0) return "0 hrs 0 mins 0 secs";
+    if (!seconds || seconds <= 0) return "N/A";
 
     hours = Math.floor(seconds / 3600);
     minutes = Math.floor((seconds % 3600) / 60);
@@ -94,10 +94,19 @@ const AdminDashBoard = () => {
         <TableCard
           title="Recent SignUps"
           header={["Name", "Email", "Date"]}
-          rows={[
-            ["Jane Doe", "Jane@gmail.com", "2025-09-22"],
-            ["John Smith", "john@gmail.com", "2025-09-21"],
-          ]}
+         rows={
+      [...reports] // copy so original array isn’t mutated
+        .sort(
+          (a, b) =>
+            new Date(b.date).getTime() - new Date(a.date).getTime()
+        )
+        .slice(0, 4) // only first 3
+        .map((r) => [
+          r.name,
+          r.workhour, // or r.workhour if you want instead of email
+          new Date(r.date).toLocaleDateString(),
+        ])
+    }
         />
       </div>
     </>
