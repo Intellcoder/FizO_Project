@@ -42,7 +42,7 @@ const SideBar = () => {
       {/* Sidebar for large screens */}
       <Toaster position="top-center" reverseOrder={false} />
       <div
-        className={`md:flex flex-col bg-primary transition-all duration-300 h-screen ${
+        className={`md:flex flex-col bg-primary transition-all duration-300  ${
           isOpen ? "w-56" : "w-12 md:w-20"
         }`}
       >
