@@ -26,7 +26,7 @@ const AdminDashBoard = () => {
           </div>
         </div>
       );
-    if (!seconds || seconds <= 0) return "0 hrs 0 mins 0 secs";
+    if (!seconds || seconds <= 0) return "N/A";
 
     hours = Math.floor(seconds / 3600);
     minutes = Math.floor((seconds % 3600) / 60);

@@ -2,7 +2,7 @@ import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
 import { BiBell, BiSearch } from "react-icons/bi";
 import { FaPhoenixSquadron } from "react-icons/fa";
-import { IoMenu } from "react-icons/io5";
+
 
 const Header = () => {
   function stringToColor(string: string) {
