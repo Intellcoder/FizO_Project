@@ -25,9 +25,8 @@ const trendData = [
 ];
 
 const COLORS = ["#4CAF50", "#F44336"];
-type Props = {};
 
-const Analytics = (props: Props) => {
+const Analytics = () => {
   const { reports } = useAuth();
 
   // Chart Data
@@ -133,7 +132,7 @@ const Analytics = (props: Props) => {
                 label
               >
                 {statusData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index]} />
+                  <Cell key={`cell-${entry.name}`} fill={COLORS[index]} />
                 ))}
               </Pie>
               <Legend />

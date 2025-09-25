@@ -1,10 +1,10 @@
 import { motion } from "framer-motion";
 import { MdLockClock } from "react-icons/md";
 import { useAuth } from "../context/AuthContext";
-import { FiArrowUpRight } from "react-icons/fi";
+
 import StatsCard from "../components/StatsCard";
 import ChartCard from "../components/ChartCard";
-import BarGraph from "../components/BarChart";
+
 import PieGraph from "../components/PieChart";
 import TableCard from "../components/TableCard";
 import LineChart from "../components/LineChart";

@@ -230,48 +230,83 @@ const Team = () => {
                   className="space-y-4 bg-white z-10"
                   onSubmit={handleSubmit(onSubmit)}
                 >
-                  <input
-                    type="text"
-                    placeholder="Full Name"
-                    {...register("name", { required: "Name is required" })}
-                    className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#4153ef] outline-none"
-                    required
-                  />
-                  <input
-                    type="email"
-                    placeholder="Email"
-                    {...register("email", { required: "Email is required" })}
-                    className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#4153ef] outline-none"
-                    required
-                  />
-                  <input
-                    type="text"
-                    placeholder="Password"
-                    {...register("password", {
-                      required: "Password is required",
-                    })}
-                    className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#4153ef] outline-none"
-                    required
-                  />
-                  <select
-                    {...register("role", {
-                      required: "role is required",
-                    })}
-                    className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#4153ef] outline-none"
-                  >
-                    <option>Admin</option>
-                    <option>Member</option>
-                    <option>Viewer</option>
-                  </select>
-                  <select
-                    {...register("status", {
-                      required: "status is required",
-                    })}
-                    className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#4153ef] outline-none"
-                  >
-                    <option>Active</option>
-                    <option>Inactive</option>
-                  </select>
+                  <div className="flex flex-col">
+                    <input
+                      type="text"
+                      placeholder="Full Name"
+                      {...register("name", { required: "Name is required" })}
+                      className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#4153ef] outline-none"
+                      required
+                    />
+                    {errors.name && (
+                      <p className="text-red-500 text-sm ">
+                        {errors.name.message}
+                      </p>
+                    )}
+                  </div>
+                  <div className="flex flex-col">
+                    <input
+                      type="email"
+                      placeholder="Email"
+                      {...register("email", { required: "Email is required" })}
+                      className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#4153ef] outline-none"
+                      required
+                    />
+                    {errors.email && (
+                      <p className="text-red-500 text-sm ">
+                        {errors.email.message}
+                      </p>
+                    )}
+                  </div>
+                  <div className="flex flex-col">
+                    <input
+                      type="text"
+                      placeholder="Password"
+                      {...register("password", {
+                        required: "Password is required",
+                      })}
+                      className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#4153ef] outline-none"
+                      required
+                    />
+                    {errors.password && (
+                      <p className="text-red-500 text-sm ">
+                        {errors.password.message}
+                      </p>
+                    )}
+                  </div>
+                  <div>
+                    <select
+                      {...register("role", {
+                        required: "role is required",
+                      })}
+                      className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#4153ef] outline-none"
+                    >
+                      <option>Admin</option>
+                      <option>Member</option>
+                      <option>Viewer</option>
+                    </select>
+                    {errors.role && (
+                      <p className="text-red-500 text-sm ">
+                        {errors.role.message}
+                      </p>
+                    )}
+                  </div>
+                  <div className="flex flex-col">
+                    <select
+                      {...register("status", {
+                        required: "status is required",
+                      })}
+                      className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#4153ef] outline-none"
+                    >
+                      <option>Active</option>
+                      <option>Inactive</option>
+                    </select>
+                    {errors.status && (
+                      <p className="text-red-500 text-sm ">
+                        {errors.status.message}
+                      </p>
+                    )}
+                  </div>
                   <button
                     type="submit"
                     className="w-full bg-[#4153ef] text-white py-2 rounded-lg hover:bg-[#3542c8] transition"

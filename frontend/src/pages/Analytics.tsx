@@ -139,7 +139,7 @@ const Analytics = () => {
                 label
               >
                 {statusData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index]} />
+                  <Cell key={`cell-${entry.name}`} fill={COLORS[index]} />
                 ))}
               </Pie>
               <Legend />

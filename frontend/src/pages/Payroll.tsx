@@ -162,7 +162,7 @@ export default function WorkerPaymentPage() {
                   label
                 >
                   {pieData.map((entry, index) => (
-                    <Cell key={index} fill={COLORS[index]} />
+                    <Cell key={entry.name} fill={COLORS[index]} />
                   ))}
                 </Pie>
                 <Legend />

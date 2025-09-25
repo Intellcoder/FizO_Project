@@ -9,7 +9,7 @@ import TableCard from "../components/TableCard";
 import Loader from "../components/Loader";
 
 const AdminDashBoard = () => {
-  const { loadingReports, totalTime, reports } = useAuth();
+  const { loadingReports, totalTime } = useAuth();
 
   let hours, minutes, sec;
 

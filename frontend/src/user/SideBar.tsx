@@ -1,5 +1,4 @@
 import { IoLogOut } from "react-icons/io5";
-import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
 import { MdPayments } from "react-icons/md";
 import { useState } from "react";
 import { IoMdMenu } from "react-icons/io";

@@ -1,12 +1,9 @@
 import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
-import { BiBell, BiNotification, BiSearch } from "react-icons/bi";
+import { BiBell, BiSearch } from "react-icons/bi";
 import { FaPhoenixSquadron } from "react-icons/fa";
-import { IoIosBrowsers } from "react-icons/io";
 
-type Props = {};
-
-const Header = (props: Props) => {
+const Header = () => {
   function stringToColor(string: string) {
     let hash = 0;
     let i;

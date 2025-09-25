@@ -2,9 +2,7 @@ import Header from "../components/Header";
 import SideBar from "./SideBar";
 import { Outlet } from "react-router-dom";
 
-type Props = {};
-
-const ClientLayout = (props: Props) => {
+const ClientLayout = () => {
   return (
     <>
       <Header />

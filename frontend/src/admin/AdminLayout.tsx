@@ -2,9 +2,7 @@ import Header from "./Header";
 import SideBar from "./SideBar";
 import { Outlet } from "react-router-dom";
 
-type Props = {};
-
-const AdminLayout = (props: Props) => {
+const AdminLayout = () => {
   return (
     <>
       <Header />
