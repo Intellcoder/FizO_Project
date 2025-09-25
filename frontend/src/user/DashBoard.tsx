@@ -11,7 +11,7 @@ import LineChart from "../components/LineChart";
 import Loader from "../components/Loader";
 
 const AdminDashBoard = () => {
-  const { loadingReports, totalTime, user, reports } = useAuth();
+  const { loadingReports, user, reports } = useAuth();
 
   let hours, minutes, sec;
 
