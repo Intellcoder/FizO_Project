@@ -7,7 +7,7 @@ import {
 } from "react";
 import api from "../api/axiosInstance";
 import toast, { Toaster } from "react-hot-toast";
-import Report from "../pages/Report";
+import Report from "../pages/ReportForm";
 import { getUserFromLocalstorage } from "../utils/getUser";
 import { type AxiosProgressEvent } from "axios";
 
@@ -27,6 +27,7 @@ type Team = {
   locale: string;
   totalSeconds: number;
   role: string;
+  status: "Active" | "Not Active";
 };
 
 type Report = {
@@ -38,6 +39,7 @@ type Report = {
   name: string;
   workhour: string;
   isOutsourced: boolean;
+  totalSeconds: number;
   accountOwner: {
     _id: string;
     email: string;

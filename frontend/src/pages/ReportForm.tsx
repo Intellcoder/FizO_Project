@@ -70,7 +70,7 @@ const Report = () => {
       <div></div>
       <div
         className={`flex flex-col items-center border-dashed border-2 border-solid-blue bg-light-gray py-4 pb-4 mt-3 rounded-lg w-full cursor-pointer ${
-          isDragOver ? "border-blue-800 bg-blue-50" : "border-blue-600"
+          isDragOver ? "border-primary bg-blue-50" : "border-blue-600"
         }`}
         onClick={() => document.getElementById("fileInput")?.click()}
         onDragOver={(e) => {
@@ -86,7 +86,7 @@ const Report = () => {
       >
         <h1 className="text-2xl font-medium">Upload File</h1>
         <div className="flex flex-col items-center">
-          <FaCloudDownloadAlt className="text-[60px] text-solid-blue" />
+          <FaCloudDownloadAlt className="text-[60px] text-primary" />
           <h1 className="mt-2 mb-2 text-xl">Drag and Drop Image here</h1>
         </div>
         <input
@@ -101,13 +101,13 @@ const Report = () => {
       <div className="mt-4 flex items-center justify-evenly">
         <button
           onClick={() => document.getElementById("fileInput")?.click()}
-          className="text-white text-center text-xl bg-solid-blue rounded-lg px-6 py-2 cursor-pointer"
+          className="text-white text-center text-xl bg-primary rounded-lg px-6 py-2 cursor-pointer"
         >
           Click to Upload Image
         </button>
         <Link
           to={"/outsourced"}
-          className="text-blue text-xl text-bold ml-2 text-center border-2 rounded-lg cursor-pointer px-6 py-2 text-solid-blue"
+          className=" text-xl text-bold ml-2 text-center border-2 rounded-lg cursor-pointer px-6 py-2 text-primary"
         >
           OutSourced Account
         </Link>
@@ -138,7 +138,7 @@ const Report = () => {
       {isProcessing && (
         <div className="fixed inset-0 flex flex-col items-center justify-center bg-black/30 backdrop-blur-sm  z-50">
           <Loader type="dots" color="#ef4444" size={100} speed={0.6} />
-          <h1 className="text-4xl text-red-500 font-medium">
+          <h1 className="text-4xl text-white font-medium">
             Please Wait while we Process your report.....
           </h1>
         </div>

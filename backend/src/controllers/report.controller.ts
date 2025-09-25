@@ -151,8 +151,12 @@ export const submitReport: RequestHandler = async (
     });
 
     //update the user total time
-    const updatedTime = await incrementWorkerTotalTime(user._id, safeSeconds);
+    const updatedTime: any = await incrementWorkerTotalTime(
+      user._id,
+      safeSeconds
+    );
 
+    const totalHours = updatedTime / 3600;
     return res.status(201).json({
       message: "Report uploaded & logged successfully",
       report,

@@ -1,56 +1,45 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Dashboard from "./pages/Dashboard";
 import SignUp from "./pages/SignUp";
 import Login from "./pages/Login";
-import ReportDetails from "./pages/ReportDetails";
-import Home from "./pages/Home";
-import MainDashboard from "./pages/MainDashboard";
-import ProtectedRoute from "./components/ProtectedRoute";
-import OutSourcedReport from "./pages/OutSourcedReport";
+import EmployeeAnalytics from "./pages/Analytics";
+import AdminDashBoard from "./admin/AdminDashBoard";
+import AdminLayout from "./admin/AdminLayout";
+import Team from "./admin/Team";
+import Reports from "./pages/Reports";
+import Payroll from "./admin/Payroll";
+import Analytics from "./admin/Analytics";
+import LogoutButton from "./components/Logout";
+import ClientLayout from "./client/ClientLayout";
+import ReportPage from "./client/Report";
+import Layout from "./user/Layout";
+import DashBoard from "./user/DashBoard";
+import Payment from "./pages/Payroll";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route element={<Home />} path="/">
-          <Route
-            element={
-              <ProtectedRoute>
-                <MainDashboard />
-              </ProtectedRoute>
-            }
-            index
-          />
-
-          <Route
-            element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            }
-            path="/dashboard"
-          />
-          <Route
-            element={
-              <ProtectedRoute>
-                <ReportDetails />
-              </ProtectedRoute>
-            }
-            path="/report"
-          />
-          <Route
-            element={
-              <ProtectedRoute>
-                <OutSourcedReport />
-              </ProtectedRoute>
-            }
-            path="/outsourced"
-          />
+        <Route element={<Layout />} path="/">
+          <Route element={<DashBoard />} index />
+          <Route element={<Reports />} path="/report" />
+          <Route element={<Payment />} path="/payment" />
+          <Route element={<EmployeeAnalytics />} path="/data" />
         </Route>
         <Route path="*" element={<Login />} />
 
         <Route element={<SignUp />} path="/signup" />
         <Route element={<Login />} path="/login" />
+        <Route element={<AdminLayout />} path="/admin">
+          <Route element={<AdminDashBoard />} index />
+          <Route element={<Team />} path="team" />
+          <Route element={<Reports />} path="report" />
+          <Route element={<Payroll />} path="payroll" />
+          <Route element={<Analytics />} path="analytics" />
+          <Route element={<LogoutButton />} path="auth" />
+        </Route>
+        <Route element={<ClientLayout />} path="/client">
+          <Route element={<ReportPage />} path="client" />
+        </Route>
       </Routes>
     </BrowserRouter>
   );

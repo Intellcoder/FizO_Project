@@ -6,7 +6,7 @@ import { MdReport } from "react-icons/md";
 import { MdTaskAlt } from "react-icons/md";
 import { MdLockClock } from "react-icons/md";
 import { MdMoreVert } from "react-icons/md";
-import Report from "./Report";
+import Report from "./ReportForm";
 import { useAuth } from "../context/AuthContext";
 import { motion } from "framer-motion";
 import CountUp from "react-countup";

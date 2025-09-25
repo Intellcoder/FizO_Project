@@ -1,0 +1,295 @@
+import Avatar from "@mui/material/Avatar";
+import { AnimatePresence, motion } from "framer-motion";
+import { useState } from "react";
+import api from "../api/axiosInstance";
+import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+
+type SignUpFormInput = {
+  name: string;
+  email: string;
+  password: string;
+  locale: string;
+  role: "Admin" | "User" | "Client";
+  status: "Active" | "Non-Active";
+};
+
+const {
+  register,
+  handleSubmit,
+  formState: { errors },
+} = useForm<SignUpFormInput>();
+
+function stringToColor(string: string) {
+  let hash = 0;
+  let i;
+
+  /* eslint-disable no-bitwise */
+  for (i = 0; i < string.length; i += 1) {
+    hash = string.charCodeAt(i) + ((hash << 5) - hash);
+  }
+
+  let color = "#";
+
+  for (i = 0; i < 3; i += 1) {
+    const value = (hash >> (i * 8)) & 0xff;
+    color += `00${value.toString(16)}`.slice(-2);
+  }
+  /* eslint-enable no-bitwise */
+
+  return color;
+}
+
+function stringAvatar(name: string) {
+  return {
+    sx: {
+      bgcolor: stringToColor(name),
+    },
+    children: `${name.split(" ")[0][0]}`,
+  };
+}
+
+const Team = () => {
+  const { team } = useAuth();
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const onSubmit = async (data: SignUpFormInput) => {
+    setLoading(true);
+    try {
+      const res = await api.post("/auth/register", data);
+
+      if (!res.data?.token) {
+        toast.error("Login failed:Token not received");
+        setLoading(false);
+        return;
+      }
+
+      //store token if available
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("user", JSON.stringify(res.data.user));
+
+      toast.success("Signup successful!");
+      setLoading(false);
+
+      // Wait 2.5s before redirect
+      setTimeout(() => {
+        //redirect to home page
+        navigate("/login");
+      }, 3000);
+    } catch (error: any) {
+      const errorMsg =
+        error.response?.data?.message ||
+        "Something went wrong,Please try again.";
+      toast.error(errorMsg);
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="p-6">
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Team Members</h1>
+          <p>Manage your team and their access levels</p>
+        </div>
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="bg-primary text-white px-4 py-2 rounded-lg shadow hover:bg-secondary transition"
+        >
+          + Add Member
+        </button>
+      </div>
+      <div className=" hidden md:block">
+        <table className="w-full border border-gray-200 rounded-lg overflow-hidden">
+          <thead className="bg-gray-50  mb-3">
+            <tr style={{ marginBottom: "2rem" }}>
+              <th className="px-4 py-2 text-left">Name</th>
+              <th className="px-4 py-2 ">Locale</th>
+              <th className="px-4 py-2 ">Role</th>
+              <th className="px-4 py-2 ">Email</th>
+              <th className="px-4 py-2 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody className="mt-3">
+            {team.map((member) => (
+              <tr
+                key={member.id}
+                className="hover:bg-gray-50 transition mt-3 pt-3"
+              >
+                <td className="px-4 py-3 flex items-center gap-3">
+                  <Avatar {...stringAvatar(member.name)} />
+
+                  <span>{member.name}</span>
+                </td>
+                <td className="px-4 py-3">{member.locale}</td>
+                <td className="px-4 py-3">{member.role}</td>
+                <td className="px-4 py-3">{member.email}</td>
+                <td className="px-4 py-3">
+                  <span
+                    className={`px-2 py-1 text-xs font-medium rounded-full ${
+                      member.status === "Active"
+                        ? "bg-green-100 text-green-700"
+                        : "bg-red-100 text-red-700"
+                    }`}
+                  >
+                    {member.status}
+                  </span>
+                </td>
+                <td className="px-4 py-3 text-right">
+                  <button className="text-sm text-primary hover:underline mr-3">
+                    Edit
+                  </button>
+                  <button className="text-sm text-red-500 hover:underline">
+                    Remove
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      {/*mobile card*/}
+      <div className="grid grid-cols-1 gap-4 md:hidden">
+        {team.map((member) => (
+          <motion.div
+            key={member.id}
+            className="bg-white border border-gray-200 rounded-lg shadow-sm p-4 flex flex-col"
+            whileHover={{ scale: 1.02 }}
+          >
+            <div className="flex items-center gap-3 mb-3">
+              <div>
+                <h1 className="font-semibold text-gray-900">{member.name}</h1>
+                <p className="text-sm text-gray-500">{member.role}</p>
+              </div>
+              <div className="mb-2">
+                <div className="mb-2">
+                  <p className="text-sm text-gray-500">{member.email}</p>
+                  <p className="text-sm text-gray-500">{member.locale}</p>
+                </div>
+                <div className="flex gap-4">
+                  <span
+                    className={`mt-2 w-fit px-2 py-1 text-xs font-medium rounded-full ${
+                      member.status === "Active"
+                        ? "bg-green-100 text-green-700"
+                        : "bg-red-100 text-red-700"
+                    }`}
+                  >
+                    {member.status}
+                  </span>
+                  <div className="flex gap-4 mt-4">
+                    <button className="text-sm text-primary hover:underline">
+                      Edit
+                    </button>
+                    <button className="text-sm text-red-500 hover:underline">
+                      Remove
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+      {/*Animated modal*/}
+
+      <AnimatePresence>
+        {isModalOpen && (
+          <motion.div
+            className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-0"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            {/*backdrop*/}
+            <motion.div
+              className="bg-white rounded-xl shadow-2xl w-full max-w-md animate- z-0"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.5 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsModalOpen(true)}
+            >
+              {/*modal card*/}
+              <motion.div
+                onClick={() => setIsModalOpen(true)}
+                className="bg-white rounded-xl p-6 shadow-2xl w-full max-w-md animate-fadeIn z-1"
+                initial={{ scale: 0.9, opacity: 0, y: 30 }}
+                animate={{ scale: 1, opacity: 1, y: 0 }}
+                exit={{ scale: 0.9, opacity: 0, y: 30 }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                // onClick={() => setIsModalOpen(true)}
+              >
+                <h1 className="text-lg font-bold text-gray-900 mb-4">
+                  Add Team Member
+                </h1>
+                <form
+                  className="space-y-4 bg-white z-10"
+                  onSubmit={handleSubmit(onSubmit)}
+                >
+                  <input
+                    type="text"
+                    placeholder="Full Name"
+                    {...register("name", { required: "Name is required" })}
+                    className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#4153ef] outline-none"
+                    required
+                  />
+                  <input
+                    type="email"
+                    placeholder="Email"
+                    {...register("email", { required: "Email is required" })}
+                    className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#4153ef] outline-none"
+                    required
+                  />
+                  <input
+                    type="text"
+                    placeholder="Password"
+                    {...register("password", {
+                      required: "Password is required",
+                    })}
+                    className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#4153ef] outline-none"
+                    required
+                  />
+                  <select
+                    {...register("role", {
+                      required: "role is required",
+                    })}
+                    className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#4153ef] outline-none"
+                  >
+                    <option>Admin</option>
+                    <option>Member</option>
+                    <option>Viewer</option>
+                  </select>
+                  <select
+                    {...register("status", {
+                      required: "status is required",
+                    })}
+                    className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#4153ef] outline-none"
+                  >
+                    <option>Active</option>
+                    <option>Inactive</option>
+                  </select>
+                  <button
+                    type="submit"
+                    className="w-full bg-[#4153ef] text-white py-2 rounded-lg hover:bg-[#3542c8] transition"
+                  >
+                    {loading ? (
+                      <span className="roundef-full ">Loading..</span>
+                    ) : (
+                      "Add Member"
+                    )}
+                  </button>
+                </form>
+              </motion.div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
+
+export default Team;
