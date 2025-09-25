@@ -58,7 +58,7 @@ const Report = () => {
 
     // Wait 2.5s before redirect
     setTimeout(() => {
-      Navigate("/dashboard");
+      Navigate("/report");
     }, 3000);
     refreshReports();
   };
