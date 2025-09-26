@@ -17,6 +17,7 @@ type User = {
   name: string;
   username: string;
   locale: string;
+  totalTask: number;
   totalSeconds: number;
   role: string;
 };

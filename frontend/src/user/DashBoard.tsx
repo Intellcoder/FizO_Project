@@ -13,6 +13,7 @@ import Loader from "../components/Loader";
 const AdminDashBoard = () => {
   const { loadingReports, user, reports } = useAuth();
 
+  console.log(user);
   let hours, minutes, sec;
 
   const formatSeconds = (seconds?: number | null) => {
@@ -96,19 +97,16 @@ const AdminDashBoard = () => {
         <TableCard
           title="Recent Reports submitted"
           header={["Name", "WorkHour", "Date"]}
- rows={
-      [...reports] // copy so original array isn’t mutated
-        .sort(
-          (a, b) =>
-            new Date(b.date).getTime() - new Date(a.date).getTime()
-        )
-        .slice(0, 3) // only first 3
-        .map((r) => [
-          r.name,
-          r.workhour, // or r.workhour if you want instead of email
-          new Date(r.date).toLocaleDateString(),
-        ])
-    }
+          rows={[...reports] // copy so original array isn’t mutated
+            .sort(
+              (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+            )
+            .slice(0, 3) // only first 3
+            .map((r) => [
+              r.name,
+              r.workhour, // or r.workhour if you want instead of email
+              new Date(r.date).toLocaleDateString(),
+            ])}
         />
       </div>
     </>
