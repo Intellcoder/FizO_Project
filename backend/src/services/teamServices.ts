@@ -6,7 +6,7 @@ export async function getAllTeamMembers() {
     {
       role: { $nin: ["admin"] },
     },
-    "name locale totalSeconds role"
+    "name locale totalSeconds role totalTask"
   );
 }
 
@@ -30,6 +30,6 @@ export async function updateProfile(
 export async function getUserProfileDetails(userId: string) {
   return await User.findById(
     userId,
-    "id name locale email totalSeconds workerid"
+    "id name locale email totalSeconds workerid totalTask"
   );
 }

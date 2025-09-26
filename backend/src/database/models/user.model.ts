@@ -53,6 +53,7 @@ const userSchema = new Schema<IUSER>(
     },
     totalTask: {
       type: Number,
+      default: 0,
     },
     role: {
       type: String,

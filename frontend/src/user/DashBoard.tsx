@@ -13,9 +13,8 @@ import Loader from "../components/Loader";
 const AdminDashBoard = () => {
   const { loadingReports, user, reports } = useAuth();
 
-  console.log(user);
   let hours, minutes, sec;
-
+  console.log(user);
   const formatSeconds = (seconds?: number | null) => {
     if (loadingReports)
       return (
@@ -34,6 +33,7 @@ const AdminDashBoard = () => {
     sec = seconds % 60;
     return `${hours} hrs ${minutes} mins ${sec} secs`;
   };
+
   const formatTask = (task?: number | null) => {
     if (loadingReports)
       return (

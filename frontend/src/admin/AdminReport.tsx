@@ -30,7 +30,8 @@ type Report = {
 };
 
 export default function AdminReport() {
-  const { reports, excelDownload, user, refreshReports } = useAuth();
+  const { reports, excelDownload, user, refreshReports, deleteReport } =
+    useAuth();
   const [selected, setSelected] = useState<Report | null>(null);
   const [isFormOpen, setIsFormOpened] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -42,7 +43,7 @@ export default function AdminReport() {
   const handleDelete = async () => {
     if (!selected) return;
     try {
-      await api.delete(`/reports/${selected._id}`);
+      deleteReport(selected._id);
       toast.success("Report deleted!");
       setIsDeleteOpen(false);
       setSelected(null);
@@ -127,7 +128,9 @@ export default function AdminReport() {
               >
                 <td className="px-6 py-3 font-semibold">{r.name}</td>
                 <td className="px-6 py-3">{r.locale}</td>
-                <td className="px-6 py-3">{r.date.toString().substring(0, 10)}</td>
+                <td className="px-6 py-3">
+                  {r.date.toString().substring(0, 10)}
+                </td>
                 <td className="px-6 py-3 font-bold">{r.workhour}</td>
                 <td className="px-6 py-3">{r.accountWorker?.name}</td>
                 <td className="px-6 py-3">
@@ -142,15 +145,15 @@ export default function AdminReport() {
                   </span>
                 </td>
                 <td className="px-6 py-3 flex gap-2">
-<button
-  onClick={() => {
-    setSelected(r);
-    setIsOpen(true);
-  }}
-  className="text-blue-600 underline"
->
-  View
-</button>
+                  <button
+                    onClick={() => {
+                      setSelected(r);
+                      setIsOpen(true);
+                    }}
+                    className="text-blue-600 underline"
+                  >
+                    View
+                  </button>
 
                   {user?.role === "worker" && (
                     <>
@@ -257,9 +260,7 @@ export default function AdminReport() {
               animate={{ scale: 1 }}
               exit={{ scale: 0.9 }}
             >
-              <h2 className="text-lg font-bold mb-4">
-                Delete this report?
-              </h2>
+              <h2 className="text-lg font-bold mb-4">Delete this report?</h2>
               <p className="mb-6 text-gray-600">
                 This action cannot be undone.
               </p>
@@ -283,53 +284,63 @@ export default function AdminReport() {
       </AnimatePresence>
 
       {/* 🔹 View Modal */}
-<AnimatePresence>
-  {isOpen && selected && (
-    <motion.div
-      className="fixed inset-0 flex items-center justify-center bg-black/50 z-50"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-    >
-      <motion.div
-        className="bg-white p-6 rounded-xl w-full max-w-lg"
-        initial={{ scale: 0.9 }}
-        animate={{ scale: 1 }}
-        exit={{ scale: 0.9 }}
-      >
-        <h2 className="text-xl font-bold mb-4">Report Details</h2>
-        <p><strong>Employee:</strong> {selected.name}</p>
-        <p><strong>Locale:</strong> {selected.locale}</p>
-        <p><strong>Date:</strong> {selected.date.toString().substring(0, 10)}</p>
-        <p><strong>Work Hours:</strong> {selected.workhour}</p>
-        <p><strong>Worked By:</strong> {selected.accountWorker?.name}</p>
-        <p>
-          <strong>Status:</strong>{" "}
-          {selected.isOutsourced ? "Outsourced" : "In-house"}
-        </p>
-
-        {/* Image preview */}
-        {selected.imageUrl && (
-          <img
-            src={selected.imageUrl}
-            alt="Report"
-            className="mt-4 rounded-lg border"
-          />
-        )}
-
-        <div className="flex justify-end mt-6">
-          <button
-            onClick={() => setIsOpen(false)}
-            className="px-4 py-2 bg-gray-200 rounded"
+      <AnimatePresence>
+        {isOpen && selected && (
+          <motion.div
+            className="fixed inset-0 flex items-center justify-center bg-black/50 z-50"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
           >
-            Close
-          </button>
-        </div>
-      </motion.div>
-    </motion.div>
-  )}
-</AnimatePresence>
+            <motion.div
+              className="bg-white p-6 rounded-xl w-full max-w-lg"
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.9 }}
+            >
+              <h2 className="text-xl font-bold mb-4">Report Details</h2>
+              <p>
+                <strong>Employee:</strong> {selected.name}
+              </p>
+              <p>
+                <strong>Locale:</strong> {selected.locale}
+              </p>
+              <p>
+                <strong>Date:</strong>{" "}
+                {selected.date.toString().substring(0, 10)}
+              </p>
+              <p>
+                <strong>Work Hours:</strong> {selected.workhour}
+              </p>
+              <p>
+                <strong>Worked By:</strong> {selected.accountWorker?.name}
+              </p>
+              <p>
+                <strong>Status:</strong>{" "}
+                {selected.isOutsourced ? "Outsourced" : "In-house"}
+              </p>
 
+              {/* Image preview */}
+              {selected.imageUrl && (
+                <img
+                  src={selected.imageUrl}
+                  alt="Report"
+                  className="mt-4 rounded-lg border"
+                />
+              )}
+
+              <div className="flex justify-end mt-6">
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="px-4 py-2 bg-gray-200 rounded"
+                >
+                  Close
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* 🔹 Add Report Form */}
       <AnimatePresence>

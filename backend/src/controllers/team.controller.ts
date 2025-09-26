@@ -55,7 +55,7 @@ export async function fetchUserProfileDetails(
       });
     }
     const userProfile = await getUserProfileDetails(userId);
-    console.log("get user request");
+
     return res.status(200).json(userProfile);
   } catch (error) {
     res.status(500).json({

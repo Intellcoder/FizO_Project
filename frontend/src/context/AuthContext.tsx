@@ -115,7 +115,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setLoadingReports(true);
       const res = await api.get("/own-report");
       setReports(res.data || []);
-      refreshUser();
+      // refreshUser();
       setLoadingReports(false);
     } catch (error) {
       toast.error("Failed to fetch report");
@@ -237,7 +237,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (storedUser) {
       setUser(storedUser);
     }
-    fetchTeam();
 
     setLoading(false);
   }, []);
@@ -245,6 +244,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (user) {
       fetchReports();
+      fetchTeam();
     }
   }, [user]);
 
