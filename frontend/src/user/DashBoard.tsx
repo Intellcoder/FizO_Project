@@ -34,6 +34,22 @@ const AdminDashBoard = () => {
     sec = seconds % 60;
     return `${hours} hrs ${minutes} mins ${sec} secs`;
   };
+  const formatTask = (task?: number | null) => {
+    if (loadingReports)
+      return (
+        <div>
+          <div className="flex items-center justify-center">
+            <div className="flex flex-col gap-6 items-center justify-center ">
+              <Loader type="dots" color="#ef4444" size={100} speed={0.6} />
+            </div>
+          </div>
+        </div>
+      );
+    if (!task || task <= 0) return "N/A";
+    console.log(task);
+    return `${task}`;
+  };
+
   return (
     <>
       <div className="mb-3">
@@ -61,7 +77,7 @@ const AdminDashBoard = () => {
           <StatsCard
             title="Total Task submitted"
             icon={<MdLockClock color="green" />}
-            value="800"
+            value={formatTask(user?.totalTask).toString()}
           />
         </motion.div>
         <motion.div

@@ -9,7 +9,7 @@ import TableCard from "../components/TableCard";
 import Loader from "../components/Loader";
 
 const AdminDashBoard = () => {
-  const { loadingReports, totalTime,reports ,team} = useAuth();
+  const { loadingReports, totalTime, reports, team } = useAuth();
 
   let hours, minutes, sec;
 
@@ -94,19 +94,16 @@ const AdminDashBoard = () => {
         <TableCard
           title="Recent SignUps"
           header={["Name", "Email", "Date"]}
-         rows={
-      [...reports] // copy so original array isn’t mutated
-        .sort(
-          (a, b) =>
-            new Date(b.date).getTime() - new Date(a.date).getTime()
-        )
-        .slice(0, 4) // only first 3
-        .map((r) => [
-          r.name,
-          r.workhour, // or r.workhour if you want instead of email
-          new Date(r.date).toLocaleDateString(),
-        ])
-    }
+          rows={[...reports] // copy so original array isn’t mutated
+            .sort(
+              (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+            )
+            .slice(0, 4) // only first 3
+            .map((r) => [
+              r.name,
+              r.workhour, // or r.workhour if you want instead of email
+              new Date(r.date).toLocaleDateString(),
+            ])}
         />
       </div>
     </>

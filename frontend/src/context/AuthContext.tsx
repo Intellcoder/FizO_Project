@@ -73,6 +73,7 @@ type AuthContextType = {
   setTotalTime: (totals: TotalProps) => void;
   loadingReports: boolean;
   refreshReports: () => Promise<void>;
+  refreshUser: () => Promise<void>;
   excelDownload: () => void;
   uploadReport: (
     file: File,
@@ -95,6 +96,7 @@ const AuthContext = createContext<AuthContextType>({
   loadingReports: false,
   excelDownload: async () => {},
   refreshReports: async () => {},
+  refreshUser: async () => {},
   uploadReport: async () => {},
   editReport: async () => {},
   deleteReport: async () => {},
@@ -113,7 +115,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setLoadingReports(true);
       const res = await api.get("/own-report");
       setReports(res.data || []);
-      setTotalTime(res.data.totalSeconds || 0);
+      refreshUser();
       setLoadingReports(false);
     } catch (error) {
       toast.error("Failed to fetch report");
@@ -122,13 +124,25 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  //get userProlfe
-  const getUserProfile = async () => {
+  //Profile details
+  const refreshUser = async () => {
+    if (!user) return;
     try {
-      const res = await api.get(`/team`);
-      setTeam(res.data || null);
+      const res = await api.get(`/teamProfile`); // adjust route
+      setUser(res.data);
+      localStorage.setItem("user", JSON.stringify(res.data));
     } catch (error) {
-      //toast.error("failed to fetch profile");
+      console.error("Failed to refresh user");
+    }
+  };
+
+  const fetchTeam = async () => {
+    if (!user) return;
+    try {
+      const res = await api.get(`/team`); // adjust route
+      setTeam(res.data);
+    } catch (error) {
+      console.error("Failed to gwt team");
     }
   };
 
@@ -168,6 +182,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       setTotalTime(res.data.totalSeconds || 0);
       toast.success(res.data.message || "Report uploaded successfully");
+      await refreshUser();
     } catch (error) {
       toast.error("File upload failed.Please try again");
     }
@@ -222,15 +237,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (storedUser) {
       setUser(storedUser);
     }
+    fetchTeam();
 
     setLoading(false);
   }, []);
 
   useEffect(() => {
     if (user) {
-      getUserProfile();
       fetchReports();
-      console.log(reports);
     }
   }, [user]);
 
@@ -248,6 +262,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         excelDownload,
         loadingReports,
         refreshReports: fetchReports,
+        refreshUser,
         uploadReport,
         editReport,
         deleteReport,

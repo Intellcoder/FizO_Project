@@ -158,6 +158,7 @@ export const submitReport: RequestHandler = async (
     );
 
     const totalHours = updatedTime / 3600;
+
     return res.status(201).json({
       message: "Report uploaded & logged successfully",
       report,
