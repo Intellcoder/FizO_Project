@@ -11,7 +11,8 @@ export interface IUSER extends Document {
   password: string;
   locale: string;
   role: string;
-  totalSeconds: Number;
+  totalSeconds: number;
+  totalTask: number;
   comparePassword(password: string): Promise<boolean>;
 }
 
@@ -48,6 +49,9 @@ const userSchema = new Schema<IUSER>(
       required: true,
     },
     totalSeconds: {
+      type: Number,
+    },
+    totalTask: {
       type: Number,
     },
     role: {

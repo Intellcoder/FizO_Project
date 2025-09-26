@@ -8,6 +8,7 @@ export interface workHoursResult {
   hours: number;
   minutes: number;
   seconds: number;
+  todayTasks: number | null; // ✅ only today's tasks
 }
 
 export async function extractTextFromImage(
@@ -25,10 +26,10 @@ export async function extractTextFromImage(
     seconds = 0;
   let todaysHours: string | null = null;
 
-  //fuzzy search
+  // ✅ fuzzy search for "today"
   const todayIndex = words.findIndex((w) => stringSimilarity(w, "today") > 0.6);
 
-  //comon ocr mistakes to standard unit
+  // ✅ map OCR mistakes
   const unitMap: Record<string, "hours" | "minutes" | "seconds"> = {
     hours: "hours",
     hour: "hours",
@@ -44,20 +45,20 @@ export async function extractTextFromImage(
     s: "seconds",
   };
 
-  // ✅ Range validator for realistic work times
+  // ✅ validate ranges
   const isValidTimeValue = (
     value: number,
     unit: "hours" | "minutes" | "seconds" | null
   ) => {
     if (!unit) return false;
-    if (unit === "hours") return value >= 0 && value <= 8;
+    if (unit === "hours") return value >= 0 && value <= 12;
     if (unit === "minutes" || unit === "seconds")
       return value >= 0 && value < 60;
     return false;
   };
 
   if (todayIndex !== -1) {
-    const timeRegex = /\d+\s*(hours?|minutes?|seconds?)/i;
+    const timeRegex = /(\d+)\s*(hours?|minutes?|seconds?)/i;
     let foundHours = false,
       foundMinutes = false,
       foundSeconds = false;
@@ -67,7 +68,7 @@ export async function extractTextFromImage(
       const match = item.match(timeRegex);
       if (match) {
         const value = parseInt(match[1], 10);
-        const rawUnit = (match[2] || "").toLocaleLowerCase();
+        const rawUnit = (match[2] || "").toLowerCase();
         const unit = unitMap[rawUnit] || null;
 
         if (isValidTimeValue(value, unit)) {
@@ -80,20 +81,10 @@ export async function extractTextFromImage(
           } else if (unit === "seconds" && !foundSeconds) {
             seconds = value;
             foundSeconds = true;
-          } else {
-            if (!foundHours) {
-              hours = value;
-              foundHours = true;
-            } else if (!foundMinutes) {
-              minutes = value;
-              foundMinutes = true;
-            } else if (!foundSeconds) {
-              seconds = value;
-              foundSeconds = true;
-            }
           }
-          if (foundHours && foundMinutes && foundSeconds) break;
         }
+
+        if (foundHours && foundMinutes && foundSeconds) break;
       }
     }
     if (foundHours || foundMinutes || foundSeconds) {
@@ -101,7 +92,7 @@ export async function extractTextFromImage(
     }
   }
 
-  // Fallback if "today" not found
+  // ✅ fallback if "today" not found
   if (!todaysHours) {
     const fallbackMatch = normalized.match(/(\d+)\s*([a-zA-Z]*)?/gi);
     if (fallbackMatch) {
@@ -126,17 +117,6 @@ export async function extractTextFromImage(
             } else if (unit === "seconds" && !foundSeconds) {
               seconds = value;
               foundSeconds = true;
-            } else {
-              if (!foundHours) {
-                hours = value;
-                foundHours = true;
-              } else if (!foundMinutes) {
-                minutes = value;
-                foundMinutes = true;
-              } else if (!foundSeconds) {
-                seconds = value;
-                foundSeconds = true;
-              }
             }
           }
 
@@ -147,8 +127,12 @@ export async function extractTextFromImage(
     }
   }
 
-  const totalSeconds = hours * 3600 + minutes * 60 + seconds;
+  // ✅ Extract only today's task count
+  const firstTaskMatch = text.match(/(\d+)\s*tasks?/i);
+  const todayTasks = firstTaskMatch ? parseInt(firstTaskMatch[1], 10) : null;
 
+  const totalSeconds = hours * 3600 + minutes * 60 + seconds;
+  const task = Number(todayTasks);
   return {
     rawText: text.trim(),
     todaysHours,
@@ -156,5 +140,6 @@ export async function extractTextFromImage(
     minutes,
     seconds,
     totalSeconds: totalSeconds ?? 0,
+    todayTasks, // ✅ only today's tasks
   };
 }

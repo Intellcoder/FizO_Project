@@ -10,7 +10,7 @@ import {
 } from "../services/reportServices";
 import path from "path";
 import fs from "fs";
-import { incrementWorkerTotalTime } from "../services/updateWorkerTime";
+import { incrementWorkerTotals } from "../services/updateWorkerTime";
 import imagekit from "../utils/imageKit";
 import { AuthServices } from "../services/authServices";
 import { constants } from "fs/promises";
@@ -119,10 +119,10 @@ export const submitReport: RequestHandler = async (
       accountOwnerLocale = user.locale;
     }
     //falback
-    const { rawText, todaysHours, totalSeconds } = await extractTextFromImage(
-      imagePath
-    );
+    const { rawText, todaysHours, totalSeconds, todayTasks } =
+      await extractTextFromImage(imagePath);
     const safeSeconds = totalSeconds ?? 0;
+    const safeTodaysTask = todayTasks ?? 0;
     if (isOutsourced) {
       payForToday = (safeSeconds / 3600) * 2000;
       console.log("PayforToday when outsourced:", payForToday);
@@ -130,7 +130,7 @@ export const submitReport: RequestHandler = async (
       payForToday = (safeSeconds / 3600) * 3000;
       console.log("payforToday when not outsourced:", payForToday);
     }
-
+    console.log(rawText);
     const report = await logReport({
       accountOwner: accountOwnerId,
       accountWorkerName: accountWorkerName,
@@ -151,9 +151,10 @@ export const submitReport: RequestHandler = async (
     });
 
     //update the user total time
-    const updatedTime: any = await incrementWorkerTotalTime(
+    const updatedTime: any = await incrementWorkerTotals(
       user._id,
-      safeSeconds
+      safeSeconds,
+      safeTodaysTask
     );
 
     const totalHours = updatedTime / 3600;
