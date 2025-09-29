@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import ReportForm from "./ReportForm";
 import { useAuth } from "../context/AuthContext";
+import Loader from "../components/Loader";
 
 // Types
 type Report = {
@@ -30,12 +31,22 @@ type Report = {
 // Sample Reports
 
 export default function ReportPage() {
-  const { reports, excelDownload} = useAuth();
+  const { reports, excelDownload, loadingReports } = useAuth();
   const [selected, setSelected] = useState<Report | null>(null);
   const [isFormOpen, setIsFormOpened] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
-  
+  if (loadingReports)
+    return (
+      <div>
+        <div className="flex items-center justify-center">
+          <div className="flex flex-col gap-6 items-center justify-center ">
+            <Loader type="dots" color="#ef4444" size={100} speed={0.6} />
+          </div>
+        </div>
+      </div>
+    );
+
   return (
     <div className="p-6 space-y-8">
       {/* Header */}
@@ -53,9 +64,10 @@ export default function ReportPage() {
           >
             + Add New Report
           </button>
-          <button 
-           onClick={excelDownload}
-          className="px-4 py-2 border-1 cursor-pointer rounded-lg hover:bg-white transition">
+          <button
+            onClick={excelDownload}
+            className="px-4 py-2 border-1 cursor-pointer rounded-lg hover:bg-white transition"
+          >
             Export CSV
           </button>
         </div>

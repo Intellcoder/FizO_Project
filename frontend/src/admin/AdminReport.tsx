@@ -51,7 +51,6 @@ export default function AdminReport() {
     if (!selected) return;
     try {
       deleteReport(selected._id);
-      toast.success("Report deleted!");
       setIsDeleteOpen(false);
       setSelected(null);
       refreshReports(); // refresh list

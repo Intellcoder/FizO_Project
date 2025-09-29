@@ -207,13 +207,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   //delete a report
   const deleteReport = async (id: string) => {
+    console.log(id);
     if (user?.role !== "admin") {
       toast.error("Only admins can delete reports");
       return;
     }
     try {
-      await api.delete(`/report/${id}`);
-      toast.success("Report deleted successfully!");
+      const res = await api.delete(`/report/${id}`);
+      console.log(res.data.message);
+      toast.success(res.data.message || "Report deleted");
       refreshUser();
       fetchReports();
     } catch (error) {

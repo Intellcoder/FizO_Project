@@ -26,11 +26,11 @@ router.route("/own-report").get(authMiddleware, getMyReports);
 //admin delete report
 router
   .route("/report/:id")
-  .delete(authMiddleware, validateRequest, sanitizeRequest, removeReport);
+  .delete(authMiddleware, validateRequest, removeReport);
 
 //admin update report
 router
   .route("/report/:id")
-  .patch(authMiddleware, validateRequest, sanitizeRequest, updateReport);
+  .patch(authMiddleware, validateRequest, updateReport);
 
 export default router;

@@ -95,7 +95,10 @@ const SideBar = () => {
         }`}
       >
         <div className="flex justify-end p-2">
-          <button onClick={() => setMobileOpen(false)} className="p-2 rounded-lg">
+          <button
+            onClick={() => setMobileOpen(false)}
+            className="p-2 rounded-lg"
+          >
             <IoMdMenu size={20} />
           </button>
         </div>
