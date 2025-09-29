@@ -4,6 +4,7 @@ import ReportForm from "../pages/ReportForm";
 import { useAuth } from "../context/AuthContext";
 import api from "../api/axiosInstance";
 import toast from "react-hot-toast";
+import Loader from "../components/Loader";
 
 // Types
 type Report = {
@@ -30,8 +31,14 @@ type Report = {
 };
 
 export default function AdminReport() {
-  const { reports, excelDownload, user, refreshReports, deleteReport } =
-    useAuth();
+  const {
+    reports,
+    excelDownload,
+    user,
+    refreshReports,
+    deleteReport,
+    loadingReports,
+  } = useAuth();
   const [selected, setSelected] = useState<Report | null>(null);
   const [isFormOpen, setIsFormOpened] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -72,6 +79,16 @@ export default function AdminReport() {
     }
   };
 
+  if (loadingReports)
+    return (
+      <div>
+        <div className="flex items-center justify-center">
+          <div className="flex flex-col gap-6 items-center justify-center ">
+            <Loader type="dots" color="#ef4444" size={100} speed={0.6} />
+          </div>
+        </div>
+      </div>
+    );
   return (
     <div className="p-6 space-y-8">
       {/* Header */}
@@ -155,7 +172,7 @@ export default function AdminReport() {
                     View
                   </button>
 
-                  {user?.role === "worker" && (
+                  {user?.role === "admin" && (
                     <>
                       <button
                         onClick={() => {

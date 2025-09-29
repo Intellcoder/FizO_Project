@@ -7,11 +7,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { SiGoogleanalytics } from "react-icons/si";
 import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
 
-import toast ,{Toaster} from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 
 const navItem = [
-  { icon: <MdDashboard />, text: "/admin", to: "/" },
-   {
+  { icon: <MdDashboard />, text: "Dashboard", to: "/admin" },
+  {
     icon: <PeopleOutlinedIcon />,
     text: "Team",
     to: "/admin/team",
@@ -33,14 +33,13 @@ const SideBar = () => {
     // Perform actual logout logic here (e.g., clearing tokens, context, etc.)
     // For now, just navigate to login/admin page
     setShowLogoutModal(false);
-      localStorage.removeItem("token");
-  localStorage.removeItem("user");
-  toast.success("Logged out successfully!");
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    toast.success("Logged out successfully!");
 
-  setTimeout(() => {
-    navigate("/login");
-  }, 2000);
-   
+    setTimeout(() => {
+      navigate("/login");
+    }, 2000);
   };
 
   return (
@@ -102,7 +101,10 @@ const SideBar = () => {
         }`}
       >
         <div className="flex justify-end p-2">
-          <button onClick={() => setMobileOpen(false)} className="p-2 rounded-lg">
+          <button
+            onClick={() => setMobileOpen(false)}
+            className="p-2 rounded-lg"
+          >
             <IoMdMenu size={20} />
           </button>
         </div>

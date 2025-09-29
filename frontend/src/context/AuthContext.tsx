@@ -128,7 +128,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const refreshUser = async () => {
     if (!user) return;
     try {
-      const res = await api.get(`/teamProfile`); // adjust route
+      const res = await api.get(`/auth/me`); // adjust route
       setUser(res.data);
       localStorage.setItem("user", JSON.stringify(res.data));
     } catch (error) {
@@ -214,6 +214,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       await api.delete(`/report/${id}`);
       toast.success("Report deleted successfully!");
+      refreshUser();
       fetchReports();
     } catch (error) {
       toast.error("Failed to delete report");
@@ -237,12 +238,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (storedUser) {
       setUser(storedUser);
     }
-
+    console.log(team);
     setLoading(false);
   }, []);
 
   useEffect(() => {
     if (user) {
+      refreshUser();
       fetchReports();
       fetchTeam();
     }

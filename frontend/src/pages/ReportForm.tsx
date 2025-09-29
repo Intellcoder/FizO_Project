@@ -11,7 +11,7 @@ interface FileWithPreview {
 }
 
 const Report = () => {
-  const { uploadReport, refreshReports } = useAuth();
+  const { uploadReport, refreshReports, refreshUser } = useAuth();
   const Navigate = useNavigate();
   const [file, setFile] = useState<FileWithPreview | null>(null);
   const [progress, setProgress] = useState<number>(0);
@@ -60,6 +60,7 @@ const Report = () => {
     setTimeout(() => {
       Navigate("/report");
     }, 3000);
+    refreshUser();
     refreshReports();
   };
 

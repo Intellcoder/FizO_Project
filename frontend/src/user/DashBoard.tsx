@@ -45,7 +45,7 @@ const AdminDashBoard = () => {
           </div>
         </div>
       );
-    if (!task || task <= 0) return "N/A";
+    if (!task) return "N/A";
     console.log(task);
     return `${task}`;
   };

@@ -4,7 +4,6 @@ import { useState } from "react";
 import api from "../api/axiosInstance";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 type SignUpFormInput = {
@@ -15,7 +14,6 @@ type SignUpFormInput = {
   role: "Admin" | "User" | "Client";
   status: "Active" | "Non-Active";
 };
-
 
 function stringToColor(string: string) {
   let hash = 0;
@@ -47,42 +45,34 @@ function stringAvatar(name: string) {
 }
 
 const Team = () => {
-
   const { team } = useAuth();
-
+  console.log(team);
   const {
-  register,
-  handleSubmit,
-  formState: { errors },
-} = useForm<SignUpFormInput>();
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<SignUpFormInput>();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
 
   const onSubmit = async (data: SignUpFormInput) => {
     setLoading(true);
     try {
       const res = await api.post("/auth/register", data);
 
-      if (!res.data?.token) {
-        toast.error("Login failed:Token not received");
-        setLoading(false);
-        return;
-      }
-
       //store token if available
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("user", JSON.stringify(res.data.user));
+      // localStorage.setItem("token", res.data.token);
+      // localStorage.setItem("user", JSON.stringify(res.data.user));
 
-      toast.success("Signup successful!");
+      toast.success(res.data.message || "Team member added sucessfully!");
       setLoading(false);
-
+      setIsModalOpen(false);
       // Wait 2.5s before redirect
-      setTimeout(() => {
-        //redirect to home page
-        navigate("/login");
-      }, 3000);
+      // setTimeout(() => {
+      //   //redirect to home page
+      //   navigate("/login");
+      // }, 3000);
     } catch (error: any) {
       const errorMsg =
         error.response?.data?.message ||
@@ -93,7 +83,7 @@ const Team = () => {
   };
 
   return (
-    <div className="p-6">
+    <div className="p-6 h-screen">
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Team Members</h1>
@@ -120,7 +110,7 @@ const Team = () => {
           <tbody className="mt-3">
             {team.map((member) => (
               <tr
-                key={member.id}
+                key={member.name}
                 className="hover:bg-gray-50 transition mt-3 pt-3"
               >
                 <td className="px-4 py-3 flex items-center gap-3">
@@ -206,6 +196,7 @@ const Team = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            onClick={() => setIsModalOpen(false)}
           >
             {/*backdrop*/}
             <motion.div
@@ -213,18 +204,26 @@ const Team = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 0.5 }}
               exit={{ opacity: 0 }}
-              onClick={() => setIsModalOpen(true)}
+              onClick={(e) => e.stopPropagation()}
             >
               {/*modal card*/}
               <motion.div
-                onClick={() => setIsModalOpen(true)}
+                // onClick={() => setIsModalOpen()}
                 className="bg-white rounded-xl p-6 shadow-2xl w-full max-w-md animate-fadeIn z-1"
                 initial={{ scale: 0.9, opacity: 0, y: 30 }}
                 animate={{ scale: 1, opacity: 1, y: 0 }}
                 exit={{ scale: 0.9, opacity: 0, y: 30 }}
                 transition={{ duration: 0.3, ease: "easeInOut" }}
-                // onClick={() => setIsModalOpen(true)}
+                onClick={(e) => e.stopPropagation()}
               >
+                <div className="flex justify-end">
+                  <button
+                    onClick={() => setIsModalOpen(false)}
+                    className="text-gray-500 text-2xl hover:text-gray-700"
+                  >
+                    x
+                  </button>
+                </div>
                 <h1 className="text-lg font-bold text-gray-900 mb-4">
                   Add Team Member
                 </h1>
@@ -284,8 +283,8 @@ const Team = () => {
                       className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#4153ef] outline-none"
                     >
                       <option>Admin</option>
-                      <option>Member</option>
-                      <option>Viewer</option>
+                      <option>Worker</option>
+                      <option>Client</option>
                     </select>
                     {errors.role && (
                       <p className="text-red-500 text-sm ">
@@ -294,8 +293,22 @@ const Team = () => {
                     )}
                   </div>
                   <div className="flex flex-col">
-                    <select
-                      {...register("status", {
+                    <input
+                      type="text"
+                      placeholder="locale"
+                      {...register("locale", {
+                        required: "locale is required",
+                      })}
+                      className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#4153ef] outline-none"
+                      required
+                    />
+                    {errors.locale && (
+                      <p className="text-red-500 text-sm ">
+                        {errors.locale.message}
+                      </p>
+                    )}
+                    {/* <select
+                      {...register("locale", {
                         required: "status is required",
                       })}
                       className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#4153ef] outline-none"
@@ -307,7 +320,7 @@ const Team = () => {
                       <p className="text-red-500 text-sm ">
                         {errors.status.message}
                       </p>
-                    )}
+                    )} */}
                   </div>
                   <button
                     type="submit"

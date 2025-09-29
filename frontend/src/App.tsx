@@ -22,40 +22,41 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route element={<ProtectedRoute allowedRoles={["worker"]}/>}></Route>
-        <Route element={<Layout />} path="/">
-          <Route element={<DashBoard />} index />
-          <Route element={<Reports />} path="/report" />
-          <Route element={<Payment />} path="/payment" />
-          <Route element={<EmployeeAnalytics />} path="/data" />
-          <Route element={<SettingsPage />} path="/settings" />
-        </Route>
-    
-
-        {/*Admin routes*/}
-     <Route element={<ProtectedRoute allowedRoles={["admin"]}/>}>
-        <Route element={<AdminLayout />} path="/admin">
-          <Route element={<AdminDashBoard />} index />
-          <Route element={<Team />} path="team" />
-          <Route element={<AdminReport />} path="reports" />
-          <Route element={<Payroll />} path="payroll" />
-          <Route element={<Analytics />} path="analytics" />
-        <Route element={<SettingsPage />} path="settings" />
-        </Route>
-        </Route>
-        
-      
-
-         {/*Client routes*/}
-        <Route element={<ClientLayout />} path="/client">
-          <Route element={<ReportPage />} path="client" />
+        {/* Worker routes */}
+        <Route element={<ProtectedRoute allowedRoles={["worker"]} />}>
+          <Route path="/" element={<Layout />}>
+            <Route index element={<DashBoard />} />
+            <Route path="report" element={<Reports />} />
+            <Route path="payment" element={<Payment />} />
+            <Route path="data" element={<EmployeeAnalytics />} />
+            <Route path="settings" element={<SettingsPage />} />
+          </Route>
         </Route>
 
+        {/* Admin routes */}
+        <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<AdminDashBoard />} />
+            <Route path="team" element={<Team />} />
+            <Route path="reports" element={<AdminReport />} />
+            <Route path="payroll" element={<Payroll />} />
+            <Route path="analytics" element={<Analytics />} />
+            <Route path="settings" element={<SettingsPage />} />
+          </Route>
+        </Route>
 
-        <Route path="*" element={<Login />} />
+        {/* Client routes */}
+        <Route path="/client" element={<ClientLayout />}>
+          <Route path="report" element={<ReportPage />} />
+        </Route>
+
+        {/* Public routes */}
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/unauthorized" element={<Unauthorized />} />
-         <Route element={<SignUp />} path="/signup" />
-        <Route element={<Login />} path="/login" />
+
+        {/* Fallback */}
+        <Route path="*" element={<Login />} />
       </Routes>
     </BrowserRouter>
   );

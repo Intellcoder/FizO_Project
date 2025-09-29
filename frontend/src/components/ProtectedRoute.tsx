@@ -16,7 +16,7 @@ const ProtectedRoute = ({ allowedRoles }: ProtectedRouteProps) => {
     return <Navigate to="/unauthorized" replace />;
   }
 
-  return <Outlet />; // renders the nested routes
+  return <Outlet />;
 };
 
 export default ProtectedRoute;

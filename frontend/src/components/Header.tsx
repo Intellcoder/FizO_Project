@@ -2,9 +2,10 @@ import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
 import { BiBell, BiSearch } from "react-icons/bi";
 import { FaPhoenixSquadron } from "react-icons/fa";
-
+import { useAuth } from "../context/AuthContext";
 
 const Header = () => {
+  const { user } = useAuth();
   function stringToColor(string: string) {
     let hash = 0;
     let i;
@@ -33,7 +34,7 @@ const Header = () => {
       children: `${name.split(" ")[0][0]}`,
     };
   }
-  const name = "Pgarnes";
+  const name = user?.name || "";
   const formattedName = name.charAt(0).toUpperCase() + name.slice(1);
 
   return (
@@ -42,10 +43,8 @@ const Header = () => {
         <span className="mr-2">
           <FaPhoenixSquadron size={25} className="text-primary" />
         </span>
-        <Typography sx={{ fontWeight: 500, fontSize: "2rem" }} >
-         <span className="text-[20px] md:text-3xl">
-           FizO
-         </span>
+        <Typography sx={{ fontWeight: 500, fontSize: "2rem" }}>
+          <span className="text-[20px] md:text-3xl">FizO</span>
           <span className="text-primary text-sm md:text-3xl">Taggers</span>
         </Typography>
       </div>
@@ -61,14 +60,12 @@ const Header = () => {
         <div className=" rounded-full border-1 p-1 hidden md:flex mx-2">
           <BiBell size={40} />
         </div>
-      
+
         <div className=" items-center flex ">
-          
           {/*avartar*/}
           <Avatar {...stringAvatar(formattedName)} sizes="sm" />
           <p className="ml-2 md:text-xl font-medium text-sm">{formattedName}</p>
         </div>
-         
       </div>
     </div>
   );
