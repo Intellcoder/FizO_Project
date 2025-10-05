@@ -6,7 +6,7 @@ import {
   useState,
 } from "react";
 import api from "../api/axiosInstance";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import Report from "../pages/ReportForm";
 import { getUserFromLocalstorage } from "../utils/getUser";
 import { type AxiosProgressEvent } from "axios";

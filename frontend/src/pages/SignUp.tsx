@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import teamImage from "../assets/team4.jpg";
 import { useState } from "react";
 import { BiArrowToLeft } from "react-icons/bi";
-import { toast, Toaster } from "react-hot-toast";
+import { toast } from "react-hot-toast";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import api from "../api/axiosInstance";

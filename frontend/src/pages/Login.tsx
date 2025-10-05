@@ -4,7 +4,7 @@ import { useState } from "react";
 import { BiArrowToLeft } from "react-icons/bi";
 import { useForm } from "react-hook-form";
 import api from "../api/axiosInstance";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { useAuth } from "../context/AuthContext";
 
 type LoginFormInputs = {
