@@ -65,7 +65,6 @@ const Team = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [selectedUser, setSelectedUser] = useState<Team | null>(null);
-  const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
   const onSubmit = async (data: SignUpFormInput) => {
