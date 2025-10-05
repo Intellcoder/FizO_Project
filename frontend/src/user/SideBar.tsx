@@ -4,7 +4,7 @@ import { SiGoogleanalytics } from "react-icons/si";
 import { useState } from "react";
 import { IoMdMenu } from "react-icons/io";
 import { NavLink, useNavigate } from "react-router-dom";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 
 const navItem = [
   { icon: <MdDashboard />, text: "DashBoard", to: "/" },
@@ -31,7 +31,6 @@ const SideBar = () => {
 
   return (
     <>
-      <Toaster position="top-center" reverseOrder={false} />
       {/* Sidebar for large screens */}
       <div
         className={`md:flex flex-col bg-primary transition-all duration-300 ${

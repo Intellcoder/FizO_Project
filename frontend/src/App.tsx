@@ -17,10 +17,12 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Unauthorized from "./pages/Unauthorized";
 import SettingsPage from "./pages/Settings";
 import AdminReport from "./admin/AdminReport";
+import { Toaster } from "react-hot-toast";
 
 function App() {
   return (
     <BrowserRouter>
+      <Toaster position="top-center" reverseOrder={false} />
       <Routes>
         {/* Worker routes */}
         <Route element={<ProtectedRoute allowedRoles={["worker"]} />}>

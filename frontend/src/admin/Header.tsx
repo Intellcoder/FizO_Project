@@ -2,8 +2,10 @@ import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
 import { BiBell, BiSearch } from "react-icons/bi";
 import { FaPhoenixSquadron } from "react-icons/fa";
+import { useAuth } from "../context/AuthContext";
 
 const Header = () => {
+  const { user } = useAuth();
   function stringToColor(string: string) {
     let hash = 0;
     let i;
@@ -32,7 +34,7 @@ const Header = () => {
       children: `${name.split(" ")[0][0]}`,
     };
   }
-  const name = "Pgarnes";
+  const name = user?.name || "";
   const formattedName = name.charAt(0).toUpperCase() + name.slice(1);
 
   return (

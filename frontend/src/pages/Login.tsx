@@ -40,7 +40,7 @@ const Login = () => {
       localStorage.setItem("user", JSON.stringify(res.data.user));
 
       setUser(res.data.user);
-      toast.success("Login successful!");
+      toast.success("Login successful!", { duration: 2000 });
       setLoading(false);
 
       // Redirect based on role
@@ -65,7 +65,6 @@ const Login = () => {
 
   return (
     <div className="h-screen flex">
-      <Toaster position="top-center" reverseOrder={false} />
       <div className="w-1/2 hidden lg:flex">
         <img
           src={teamImage}

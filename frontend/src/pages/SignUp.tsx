@@ -59,7 +59,6 @@ const SignUp = () => {
 
   return (
     <div className="h-screen flex ">
-      <Toaster position="top-center" reverseOrder={false} />
       <div className="w-1/2 hidden lg:flex h-full ">
         <img
           src={teamImage}

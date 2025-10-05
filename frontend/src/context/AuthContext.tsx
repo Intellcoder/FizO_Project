@@ -181,17 +181,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       });
 
       setTotalTime(res.data.totalSeconds || 0);
-      toast.success(res.data.message || "Report uploaded successfully");
+      toast.success(res.data.message || "Report uploaded successfully", {
+        duration: 2000,
+      });
       await refreshUser();
     } catch (error) {
-      toast.error("File upload failed.Please try again");
+      toast.error("File upload failed.Please try again", { duration: 2000 });
     }
   };
 
   //Edit Report (only admin can edit )
   const editReport = async (id: string, updates: Partial<Report>) => {
     if (user?.role !== "admin") {
-      toast.error("only admins can edit reports");
+      toast.error("only admins can edit reports", { duration: 2000 });
       return;
     }
     try {
@@ -199,9 +201,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setReports((prev) =>
         prev.map((r) => (r.id === id ? { ...r, title: res.data.report } : r))
       );
-      toast.success("Report updated successfully!");
+      toast.success("Report updated successfully!", { duration: 2000 });
     } catch (error) {
-      toast.error("Failed to update report");
+      toast.error("Failed to update report", { duration: 2000 });
     }
   };
 
@@ -209,17 +211,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const deleteReport = async (id: string) => {
     console.log(id);
     if (user?.role !== "admin") {
-      toast.error("Only admins can delete reports");
+      toast.error("Only admins can delete reports", { duration: 2000 });
       return;
     }
     try {
       const res = await api.delete(`/report/${id}`);
       console.log(res.data.message);
-      toast.success(res.data.message || "Report deleted");
+      toast.success(res.data.message || "Report deleted", { duration: 2000 });
       refreshUser();
       fetchReports();
     } catch (error) {
-      toast.error("Failed to delete report");
+      toast.error("Failed to delete report", { duration: 2000 });
     }
   };
 
@@ -230,9 +232,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         "https://fizo-backend-api-v1.onrender.com/api/v1/report/summary",
         "_blank"
       );
-      toast.success("Downloading...");
+      toast.success("Downloading...", { duration: 2000 });
     } catch (error) {
-      toast.error("Failed to download excel report");
+      toast.error("Failed to download excel report", { duration: 2000 });
     }
   };
   useEffect(() => {
@@ -272,7 +274,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         deleteReport,
       }}
     >
-      <Toaster position="top-center" reverseOrder={false} />
       {children}
     </AuthContext.Provider>
   );

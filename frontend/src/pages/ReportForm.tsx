@@ -1,6 +1,6 @@
 import { FaCloudDownloadAlt } from "react-icons/fa";
 import { useState } from "react";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 import Loader from "../components/Loader";
 import { useAuth } from "../context/AuthContext";
@@ -29,7 +29,8 @@ const Report = () => {
 
     if (selectedFile.size / 1024 / 1024 > MAX_FILE_SIZE) {
       toast.error(
-        `File is too LargestContentfulPaint.Max size is ${MAX_FILE_SIZE}`
+        `File is too LargestContentfulPaint.Max size is ${MAX_FILE_SIZE}`,
+        { duration: 2000 }
       );
 
       return;
@@ -67,8 +68,7 @@ const Report = () => {
   return (
     <div className=" mt-3 mb-6">
       {/*drop area*/}
-      <Toaster position="top-center" reverseOrder={false} />
-      <div></div>
+
       <div
         className={`flex flex-col items-center border-dashed border-2 border-solid-blue bg-light-gray py-4 pb-4 mt-3 rounded-lg w-full cursor-pointer ${
           isDragOver ? "border-primary bg-blue-50" : "border-blue-600"
