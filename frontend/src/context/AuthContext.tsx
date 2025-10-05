@@ -82,6 +82,7 @@ type AuthContextType = {
   ) => Promise<void>;
   editReport: (id: string, updates: Partial<Report>) => Promise<void>;
   deleteReport: (id: string) => Promise<void>;
+  deleteProfile: (id: string) => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType>({
@@ -100,6 +101,7 @@ const AuthContext = createContext<AuthContextType>({
   uploadReport: async () => {},
   editReport: async () => {},
   deleteReport: async () => {},
+  deleteProfile: async () => {},
 });
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -225,6 +227,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  //delete user profile
+  const deleteProfile = async (id: string) => {
+    try {
+      const res = await api.delete(`/team/${id}`);
+      toast.success(res.data.message || "UserProfile deleted");
+    } catch (error) {
+      toast.error("Failed to delete User");
+    }
+  };
+
   //download excel worksheet
   const excelDownload = async () => {
     try {
@@ -272,6 +284,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         uploadReport,
         editReport,
         deleteReport,
+        deleteProfile,
       }}
     >
       {children}

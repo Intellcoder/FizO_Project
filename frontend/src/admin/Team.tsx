@@ -15,6 +15,16 @@ type SignUpFormInput = {
   status: "Active" | "Non-Active";
 };
 
+type Team = {
+  id: string;
+  email: string;
+  name: string;
+  locale: string;
+  totalSeconds: number;
+  role: string;
+  status: "Active" | "Not Active";
+};
+
 function stringToColor(string: string) {
   let hash = 0;
   let i;
@@ -45,8 +55,7 @@ function stringAvatar(name: string) {
 }
 
 const Team = () => {
-  const { team } = useAuth();
-  console.log(team);
+  const { team, deleteProfile } = useAuth();
   const {
     register,
     handleSubmit,
@@ -55,6 +64,9 @@ const Team = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<Team | null>(null);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
   const onSubmit = async (data: SignUpFormInput) => {
     setLoading(true);
@@ -79,6 +91,19 @@ const Team = () => {
         "Something went wrong,Please try again.";
       toast.error(errorMsg);
       setLoading(false);
+    }
+  };
+
+  //delete modal
+
+  //delete userProfile
+  const handleDelete = async () => {
+    if (!selectedUser) return;
+    try {
+      console.log(selectedUser);
+      deleteProfile(selectedUser.id);
+    } catch (error) {
+      toast.error("Failed to Delete worker");
     }
   };
 
@@ -136,7 +161,13 @@ const Team = () => {
                   <button className="text-sm text-primary hover:underline mr-3">
                     Edit
                   </button>
-                  <button className="text-sm text-red-500 hover:underline">
+                  <button
+                    onClick={() => {
+                      setSelectedUser(member);
+                      setIsDeleteOpen(true);
+                    }}
+                    className="text-sm text-red-500 hover:underline"
+                  >
                     Remove
                   </button>
                 </td>
@@ -334,6 +365,44 @@ const Team = () => {
                   </button>
                 </form>
               </motion.div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* 🔹 Delete Confirmation */}
+      <AnimatePresence>
+        {isDeleteOpen && selectedUser && (
+          <motion.div
+            className="fixed inset-0 flex items-center justify-center bg-black/50 z-50"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className="bg-white p-6 rounded-xl w-full max-w-sm text-center"
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.9 }}
+            >
+              <h2 className="text-lg font-bold mb-4">Delete this worker </h2>
+              <p className="mb-6 text-gray-600">
+                This action cannot be undone.
+              </p>
+              <div className="flex justify-center gap-4">
+                <button
+                  onClick={() => setIsDeleteOpen(false)}
+                  className="px-4 py-2 bg-gray-200 rounded"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleDelete}
+                  className="px-4 py-2 bg-red-600 text-white rounded"
+                >
+                  Delete
+                </button>
+              </div>
             </motion.div>
           </motion.div>
         )}
