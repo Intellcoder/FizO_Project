@@ -8,6 +8,7 @@ import { useAuth } from "../context/AuthContext";
 
 type SignUpFormInput = {
   name: string;
+  accountName: string;
   email: string;
   password: string;
   locale: string;
@@ -301,6 +302,22 @@ const Team = () => {
                     {errors.name && (
                       <p className="text-red-500 text-sm ">
                         {errors.name.message}
+                      </p>
+                    )}
+                  </div>
+                  <div className="flex flex-col">
+                    <input
+                      type="text"
+                      placeholder="AccountName"
+                      {...register("accountName", {
+                        required: "accountName is required",
+                      })}
+                      className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#4153ef] outline-none"
+                      required
+                    />
+                    {errors.accountName && (
+                      <p className="text-red-500 text-sm ">
+                        {errors.accountName.message}
                       </p>
                     )}
                   </div>

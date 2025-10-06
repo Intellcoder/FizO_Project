@@ -6,12 +6,12 @@ export async function getAllTeamMembers() {
     {
       role: { $nin: ["admin"] },
     },
-    "name email locale totalSeconds role totalTask"
+    "name email  accountName locale totalSeconds role totalTask"
   );
 }
 
 export async function getTeamMember(workerId: string) {
-  return await User.findById(workerId, "name locale totalSeconds");
+  return await User.findById(workerId, "name accountName locale totalSeconds");
 }
 
 export async function deleteProfile(workerId: string) {
@@ -30,6 +30,6 @@ export async function updateProfile(
 export async function getUserProfileDetails(userId: string) {
   return await User.findById(
     userId,
-    "id name locale email totalSeconds workerid totalTask"
+    "id name locale email accountName totalSeconds workerid totalTask"
   );
 }

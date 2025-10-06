@@ -41,6 +41,7 @@ export class AuthServices {
   async registerUser(
     email: string,
     name: string,
+    accountName: string,
     password: string,
     locale: string
   ): Promise<{ user: IUSER; token: string }> {
@@ -51,6 +52,7 @@ export class AuthServices {
     const newUser = new User({
       email,
       name,
+      accountName,
       password,
       locale,
     });

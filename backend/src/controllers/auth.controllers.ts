@@ -14,8 +14,8 @@ export const register = async (
   next: NextFunction
 ) => {
   try {
-    const { email, name, password, locale } = req.body;
-    if (!email || !password || !name || !locale) {
+    const { email, name, accountName, password, locale } = req.body;
+    if (!email || !password || !name || !locale || accountName) {
       return res.status(400).json({
         message: "All fields are required",
       });
@@ -25,6 +25,7 @@ export const register = async (
     const { user, token } = await authServices.registerUser(
       email,
       name,
+      accountName,
       password,
       locale
     );
