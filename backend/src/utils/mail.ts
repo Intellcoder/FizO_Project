@@ -2,7 +2,8 @@ import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-const FROM_EMAIL = "FizoTaggers <no-reply@resend.dev>";
+console.log("Resend Api key loaded", process.env.RESEND_API_KEY ? "YES" : "NO");
+const FROM_EMAIL = "FizoTaggers <onboarding@resend.dev>";
 
 export const sendVerificationEmail = async (
   to: string,
@@ -23,15 +24,18 @@ export const sendVerificationEmail = async (
     </div>`;
 
   try {
-    console.log("sendiing email");
-    await resend.emails.send({
+    console.log("sendiing email to", to);
+    const { data, error } = await resend.emails.send({
       from: FROM_EMAIL,
       to,
       subject: "Verify your FizoTaggers account",
       html,
     });
-
-    console.log("email sent");
+    if (error) {
+      console.error("Resend Api error", error);
+    } else {
+      console.log("Email Sent successfully");
+    }
   } catch (error) {
     console.log("Failed to send Verifcation Email", error);
     throw new Error("Could not send verification email");
