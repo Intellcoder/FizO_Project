@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { getAllPaymentInfo, getPaymentInfo } from "services/paymentServices";
+import { getAllPaymentInfo, getPaymentInfo } from "../services/paymentServices";
 
 export async function getpaymentDetails(
   req: Request,

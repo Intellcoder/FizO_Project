@@ -112,8 +112,8 @@ const Team = () => {
   //handle Edit user details
   const handleEdit = async () => {
     if (!selectedUser) return;
+    setLoading(true);
     try {
-      setIsEditOpen;
     } catch (error) {}
   };
 

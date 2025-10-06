@@ -2,9 +2,9 @@ import { Request, Response, NextFunction } from "express";
 import { AuthServices } from "../services/authServices";
 import { createPaymentData } from "../services/paymentServices";
 import { Types } from "mongoose";
-import { sendVerificationEmail, sendPasswordResetEmail } from "utils/mail";
+import { sendVerificationEmail, sendPasswordResetEmail } from "../utils/mail";
 import crypto from "crypto";
-import User from "database/models/user.model";
+import User from "../database/models/user.model";
 
 const authServices = new AuthServices();
 
