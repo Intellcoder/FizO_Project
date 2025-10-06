@@ -22,7 +22,7 @@ type User = {
   role: string;
 };
 type Team = {
-  id: string;
+  _id: string;
   email: string;
   name: string;
   locale: string;
@@ -83,6 +83,8 @@ type AuthContextType = {
   editReport: (id: string, updates: Partial<Report>) => Promise<void>;
   deleteReport: (id: string) => Promise<void>;
   deleteProfile: (id: string) => Promise<void>;
+  editProfile: (id: string, updates: Partial<Team>) => Promise<void>;
+  refreshTeam: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType>({
@@ -102,6 +104,8 @@ const AuthContext = createContext<AuthContextType>({
   editReport: async () => {},
   deleteReport: async () => {},
   deleteProfile: async () => {},
+  editProfile: async () => {},
+  refreshTeam: async () => {},
 });
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -144,7 +148,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const res = await api.get(`/team`); // adjust route
       setTeam(res.data);
     } catch (error) {
-      console.error("Failed to gwt team");
+      console.error("Failed to get team");
     }
   };
 
@@ -237,6 +241,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  //delete user profile
+  const editProfile = async (id: string, updates: Partial<Team>) => {
+    try {
+      const res = await api.patch(`/team/${id}`, updates);
+      toast.success(res.data.message || "UserProfile Updated successfully!");
+    } catch (error: any) {
+      const errorMsg = error.response?.data.message || "Failed to Update user";
+      toast.error(errorMsg);
+    }
+  };
+
   //download excel worksheet
   const excelDownload = async () => {
     try {
@@ -285,6 +300,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         editReport,
         deleteReport,
         deleteProfile,
+        editProfile,
+        refreshTeam: fetchTeam,
       }}
     >
       {children}

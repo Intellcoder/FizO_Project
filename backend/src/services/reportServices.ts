@@ -66,8 +66,8 @@ export async function logReport({
 
 export async function getReports(accountOwner: string) {
   return await Report.find({ accountOwner })
-    .populate("accountOwner", "name email local role")
-    .populate("accountWorker", "name email local role")
+    .populate("accountOwner", "name email locale role")
+    .populate("accountWorker", "name email locale role")
     .sort({ createdAt: -1 });
 }
 

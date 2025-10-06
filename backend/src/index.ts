@@ -4,6 +4,7 @@ import rateLimit from "express-rate-limit";
 import authRoute from "./routes/auth.routes";
 import healthRoute from "./routes/health.route";
 import reports from "./routes/report.route";
+import payment from "./routes/payment.route";
 import cors from "cors";
 import viewExcel from "./routes/excel.route";
 import team from "./routes/team.routes";
@@ -36,5 +37,6 @@ app.use("/api/v1", healthRoute);
 app.use("/api/v1", reports);
 app.use("/api/v1", viewExcel);
 app.use("/api/v1", team);
+app.use("/api/v1", payment);
 
 export default app;

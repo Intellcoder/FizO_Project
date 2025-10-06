@@ -6,7 +6,7 @@ export async function getAllTeamMembers() {
     {
       role: { $nin: ["admin"] },
     },
-    "name locale totalSeconds role totalTask"
+    "name email locale totalSeconds role totalTask"
   );
 }
 

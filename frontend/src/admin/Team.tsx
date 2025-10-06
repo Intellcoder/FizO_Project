@@ -15,8 +15,8 @@ type SignUpFormInput = {
   status: "Active" | "Non-Active";
 };
 
-type Team = {
-  id: string;
+type TeamMember = {
+  _id: string;
   email: string;
   name: string;
   locale: string;
@@ -55,7 +55,7 @@ function stringAvatar(name: string) {
 }
 
 const Team = () => {
-  const { team, deleteProfile } = useAuth();
+  const { team, deleteProfile, refreshTeam } = useAuth();
   const {
     register,
     handleSubmit,
@@ -64,8 +64,9 @@ const Team = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [selectedUser, setSelectedUser] = useState<Team | null>(null);
+  const [selectedUser, setSelectedUser] = useState<TeamMember | null>(null);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
 
   const onSubmit = async (data: SignUpFormInput) => {
     setLoading(true);
@@ -79,6 +80,7 @@ const Team = () => {
       toast.success(res.data.message || "Team member added sucessfully!");
       setLoading(false);
       setIsModalOpen(false);
+      refreshTeam();
       // Wait 2.5s before redirect
       // setTimeout(() => {
       //   //redirect to home page
@@ -99,11 +101,20 @@ const Team = () => {
   const handleDelete = async () => {
     if (!selectedUser) return;
     try {
-      console.log(selectedUser);
-      deleteProfile(selectedUser.id);
+      deleteProfile(selectedUser._id);
+      setIsDeleteOpen(false);
+      refreshTeam();
     } catch (error) {
       toast.error("Failed to Delete worker");
     }
+  };
+
+  //handle Edit user details
+  const handleEdit = async () => {
+    if (!selectedUser) return;
+    try {
+      setIsEditOpen;
+    } catch (error) {}
   };
 
   return (
@@ -157,7 +168,13 @@ const Team = () => {
                   </span>
                 </td>
                 <td className="px-4 py-3 text-right">
-                  <button className="text-sm text-primary hover:underline mr-3">
+                  <button
+                    onClick={() => {
+                      setSelectedUser(member);
+                      setIsEditOpen(true);
+                    }}
+                    className="text-sm text-primary hover:underline mr-3"
+                  >
                     Edit
                   </button>
                   <button
@@ -179,7 +196,7 @@ const Team = () => {
       <div className="grid grid-cols-1 gap-4 md:hidden">
         {team.map((member) => (
           <motion.div
-            key={member.id}
+            key={member._id}
             className="bg-white border border-gray-200 rounded-lg shadow-sm p-4 flex flex-col"
             whileHover={{ scale: 1.02 }}
           >
@@ -204,10 +221,22 @@ const Team = () => {
                     {member.status}
                   </span>
                   <div className="flex gap-4 mt-4">
-                    <button className="text-sm text-primary hover:underline">
+                    <button
+                      onClick={() => {
+                        setSelectedUser(member);
+                        setIsEditOpen(true);
+                      }}
+                      className="text-sm text-primary hover:underline"
+                    >
                       Edit
                     </button>
-                    <button className="text-sm text-red-500 hover:underline">
+                    <button
+                      onClick={() => {
+                        setSelectedUser(member);
+                        setIsDeleteOpen(true);
+                      }}
+                      className="text-sm text-red-500 hover:underline"
+                    >
                       Remove
                     </button>
                   </div>
@@ -403,6 +432,79 @@ const Team = () => {
                 </button>
               </div>
             </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* 🔹 Edit Modal */}
+      <AnimatePresence>
+        {isEditOpen && selectedUser && (
+          <motion.div
+            className="fixed inset-0 flex items-center justify-center bg-black/50 z-50"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.form
+              onSubmit={handleEdit}
+              className="bg-white p-6 rounded-xl w-full max-w-md"
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.9 }}
+            >
+              <h2 className="text-lg font-bold mb-4">Edit Report</h2>
+              <input
+                type="text"
+                value={selectedUser.name}
+                onChange={(e) =>
+                  setSelectedUser({ ...selectedUser, name: e.target.value })
+                }
+                className="w-full border rounded px-3 py-2 mb-3"
+              />
+              <input
+                type="text"
+                value={selectedUser.email}
+                onChange={(e) =>
+                  setSelectedUser({ ...selectedUser, email: e.target.value })
+                }
+                className="w-full border rounded px-3 py-2 mb-3"
+              />
+              <input
+                type="text"
+                value={selectedUser.locale}
+                onChange={(e) =>
+                  setSelectedUser({
+                    ...selectedUser,
+                    locale: e.target.value,
+                  })
+                }
+                className="w-full border rounded px-3 py-2 mb-3"
+              />
+              <select
+                name="role"
+                id="role"
+                className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#4153ef] outline-none"
+              >
+                <option value="admin">Admin</option>
+                <option value="worker"> Worker</option>
+                <option value="client">Client</option>
+              </select>
+              <div className="flex justify-end gap-3 mt-5">
+                <button
+                  type="button"
+                  onClick={() => setIsEditOpen(false)}
+                  className="px-4 py-2 bg-gray-200 rounded"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-blue-600 text-white rounded"
+                >
+                  Save
+                </button>
+              </div>
+            </motion.form>
           </motion.div>
         )}
       </AnimatePresence>

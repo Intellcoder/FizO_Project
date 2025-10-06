@@ -8,11 +8,16 @@ export interface IUSER extends Document {
   _id: Types.ObjectId;
   email: string;
   name: string;
+  accountName: string;
   password: string;
   locale: string;
   role: string;
   totalSeconds: number;
   totalTask: number;
+  verifyEmailToken?: string;
+  isVerified: boolean;
+  resetPasswordToken?: string;
+  resetPasswordExpires?: Date;
   comparePassword(password: string): Promise<boolean>;
 }
 
@@ -39,6 +44,10 @@ const userSchema = new Schema<IUSER>(
       type: String,
       required: true,
     },
+    accountName: {
+      type: String,
+      required: true,
+    },
     password: {
       type: String,
       required: true,
@@ -59,6 +68,19 @@ const userSchema = new Schema<IUSER>(
       type: String,
       enum: ["worker", "admin"],
       default: "worker",
+    },
+    verifyEmailToken: { type: String },
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
+    resetPasswordToken: {
+      type: String,
+      default: undefined,
+    },
+    resetPasswordExpires: {
+      type: Date,
+      default: undefined,
     },
   },
   {
