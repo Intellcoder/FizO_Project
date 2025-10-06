@@ -23,12 +23,15 @@ export const sendVerificationEmail = async (
     </div>`;
 
   try {
+    console.log("sendiing email");
     await resend.emails.send({
       from: FROM_EMAIL,
       to,
       subject: "Verify your FizoTaggers account",
       html,
     });
+
+    console.log("email sent");
   } catch (error) {
     console.log("Failed to send Verifcation Email", error);
     throw new Error("Could not send verification email");
