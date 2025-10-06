@@ -93,6 +93,7 @@ const Team = () => {
         "Something went wrong,Please try again.";
       toast.error(errorMsg);
       setLoading(false);
+      setIsModalOpen(false);
     }
   };
 

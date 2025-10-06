@@ -1,6 +1,6 @@
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = new Resend("re_BDiYbojh_2HZKpdsnYSXsPp8MYz53noNY");
 
 console.log("Resend Api key loaded", process.env.RESEND_API_KEY ? "YES" : "NO");
 const FROM_EMAIL = "FizoTaggers <onboarding@resend.dev>";
