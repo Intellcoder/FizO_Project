@@ -1,76 +1,59 @@
-import { Resend } from "resend";
+const transporter = nodemailer.createTransport({
+  host: "smtp-relay.brevo.com",
+  port: 587,
+  auth: {
+    user: process.env.BREVO_USER || "joshuacee124@gmail.com",
+    pass: process.env.BREVO_API_KEY, // from Brevo dashboard
+  },
+});
 
-const resend = new Resend("re_BDiYbojh_2HZKpdsnYSXsPp8MYz53noNY");
+// ✅ Send Verification Email
+export async function sendVerificationEmail(to: string, token: string) {
+  const verificationLink = `https://yourfrontend.com/verify-email?token=${token}`;
 
-console.log("Resend Api key loaded", process.env.RESEND_API_KEY ? "YES" : "NO");
-const FROM_EMAIL = "FizoTaggers <onboarding@resend.dev>";
+  const mailOptions = {
+    from: '"FizoTaggers" <joshuacee124@gmail.com>', // Must match verified sender
+    to,
+    subject: "Verify your FizoTaggers Account",
+    html: `
+      <div style="font-family:Arial,sans-serif">
+        <h2>Welcome to FizoTaggers 🎉</h2>
+        <p>Click below to verify your email address:</p>
+        <a href="${verificationLink}" 
+           style="background-color:#007bff;color:#fff;padding:10px 20px;text-decoration:none;border-radius:5px;">
+           Verify Email
+        </a>
+        <p>This link will expire in 24 hours.</p>
+      </div>
+    `,
+  };
 
-export const sendVerificationEmail = async (
-  to: string,
-  name: string,
-  token: string
-) => {
-  const verifyUrl = `${process.env.CLIENT_URL}/verify-email?token=${token}&email=${to}`;
+  await transporter.sendMail(mailOptions);
+  console.log(`✅ Verification email sent to ${to}`);
+}
 
-  const html = `
-      <div style="font-family:sans-serif;line-height:1.5">
-      <h2>Welcome, ${name} 👋</h2>
-      <p>Thanks for signing up for FizoTaggers.</p>
-      <p>Please confirm your email to activate your account:</p>
-      <a href="${verifyUrl}" style="background:#2563eb;color:#fff;padding:10px 20px;text-decoration:none;border-radius:8px;">
-        Verify Email
-      </a>
-      <p>If you didn’t request this, just ignore this message.</p>
-    </div>`;
+// ✅ Send Password Reset Email
+export async function sendPasswordResetEmail(to: string, token: string) {
+  const resetLink = `https://yourfrontend.com/reset-password?token=${token}`;
 
-  try {
-    console.log("sendiing email to", to);
-    const { data, error } = await resend.emails.send({
-      from: FROM_EMAIL,
-      to,
-      subject: "Verify your FizoTaggers account",
-      html,
-    });
-    if (error) {
-      console.error("Resend Api error", error);
-    } else {
-      console.log("Email Sent successfully");
-    }
-  } catch (error) {
-    console.log("Failed to send Verifcation Email", error);
-    throw new Error("Could not send verification email");
-  }
-};
+  const mailOptions = {
+    from: '"FizoTaggers Support" <joshuacee124@gmail.com>',
+    to,
+    subject: "Password Reset Request",
+    html: `
+      <div style="font-family:Arial,sans-serif">
+        <h2>Password Reset Requested</h2>
+        <p>We received a request to reset your password.</p>
+        <p>If this was you, click below to set a new password:</p>
+        <a href="${resetLink}"
+           style="background-color:#28a745;color:#fff;padding:10px 20px;text-decoration:none;border-radius:5px;">
+           Reset Password
+        </a>
+        <p>This link expires in 24 hours.</p>
+      </div>
+    `,
+  };
 
-//send password reset email
-export const sendPasswordResetEmail = async (
-  to: string,
-  name: string,
-  resetToken: string
-) => {
-  const resetUrl = `${process.env.CLIENT_URL}/reset-password?token=${resetToken}&email=${to}`;
-
-  const html = `
-    <div style="font-family:sans-serif;line-height:1.5">
-      <h2>Hello, ${name}</h2>
-      <p>We received a request to reset your password.</p>
-      <p>Click below to set a new one:</p>
-      <a href="${resetUrl}" style="background:#ef4444;color:#fff;padding:10px 20px;text-decoration:none;border-radius:8px;">
-        Reset Password
-      </a>
-      <p>If you didn’t request this, you can safely ignore it.</p>
-    </div>
-  `;
-
-  try {
-    await resend.emails.send({
-      from: FROM_EMAIL,
-      to,
-      subject: "Reset your FizoTaggers password",
-      html,
-    });
-  } catch (err) {
-    console.error("Failed to send password reset email:", err);
-    throw new Error("Could not send password reset email");
-  }
-};
+  await transporter.sendMail(mailOptions);
+  console.log(`✅ Password reset email sent to ${to}`);
+}
