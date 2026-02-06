@@ -5,13 +5,14 @@ const mongoose_1 = require("mongoose");
 const paymentModel = new mongoose_1.Schema({
     date: {
         type: Date,
-        default: Date.now(),
+        default: Date.now,
         required: true,
     },
     accountOwner: {
         type: mongoose_1.Schema.Types.ObjectId,
         ref: "User",
         required: true,
+        index: true,
     },
     totalSeconds: {
         type: Number,

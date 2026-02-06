@@ -1,5 +1,4 @@
 import { Request, Response, NextFunction } from "express";
-import { getAllPaymentInfo, getPaymentInfo } from "../services/paymentServices";
 
 export async function getpaymentDetails(
   req: Request,
@@ -11,12 +10,12 @@ export async function getpaymentDetails(
 
     let paymentInfo;
 
-    if (user.role === "admin") {
-      //get all reports
-      paymentInfo = getAllPaymentInfo();
-    } else {
-      paymentInfo = await getPaymentInfo(user._id);
-    }
+    // if (user.role === "admin") {
+    //   //get all reports
+    //   paymentInfo = getAllPaymentInfo();
+    // } else {
+    //   paymentInfo = await getPaymentInfo(user._id);
+    // }
 
     res.status(200).json({
       success: true,

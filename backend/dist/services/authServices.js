@@ -28,7 +28,7 @@ class AuthServices {
         }
         return user;
     }
-    async registerUser(email, name, password, locale) {
+    async registerUser(email, name, accountName, password, locale) {
         const existingUser = await user_model_1.default.findOne({ email });
         if (existingUser) {
             throw new Error("user already exist");
@@ -36,6 +36,7 @@ class AuthServices {
         const newUser = new user_model_1.default({
             email,
             name,
+            accountName,
             password,
             locale,
         });

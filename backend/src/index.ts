@@ -1,26 +1,40 @@
 import express, { Application } from "express";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
-import authRoute from "./routes/auth.routes";
+
 import healthRoute from "./routes/health.route";
-import reports from "./routes/report.route";
+import reports from "./routes/reports.route";
 import payment from "./routes/payment.route";
 import cors from "cors";
 import viewExcel from "./routes/excel.route";
-import team from "./routes/team.routes";
+import worker from "./routes/worker.route";
+import ErrorHandler from "./middlewares/errors";
 
 const app: Application = express();
 
 app.use(express.json({ limit: "10kb" }));
 app.use(express.urlencoded({ extended: true }));
-
+console.log("request passed");
+const allowedOrigins = [
+  "https://api.fizotaggers.name.ng/api/v1",
+  "http://localhost:5173",
+];
 app.use(
   cors({
-    origin: ["https://fizotaggers.onrender.com", "http://localhost:5173"], //allowed origins (urls/client)
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    }, //allowed origins (urls/client)
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
     allowedHeaders: ["Content-Type", "Authorization"],
-  })
+    exposedHeaders: ["Content-Disposition"],
+  }),
 );
+
 //security HTTP headers
 app.use(helmet());
 
@@ -30,13 +44,15 @@ app.use(
     windowMs: 15 * 60 * 1000,
     limit: 100, //max request per IP
     message: "Too many request,Please try again later.",
-  })
+  }),
 );
-app.use("/api/v1", authRoute);
+
 app.use("/api/v1", healthRoute);
 app.use("/api/v1", reports);
 app.use("/api/v1", viewExcel);
-app.use("/api/v1", team);
 app.use("/api/v1", payment);
+app.use("/api/v1", worker);
+
+app.use(ErrorHandler);
 
 export default app;

@@ -12,7 +12,7 @@ export interface workHoursResult {
 }
 
 export async function extractTextFromImage(
-  filePath: string
+  filePath: string,
 ): Promise<workHoursResult> {
   const {
     data: { text },
@@ -48,7 +48,7 @@ export async function extractTextFromImage(
   // ✅ validate ranges
   const isValidTimeValue = (
     value: number,
-    unit: "hours" | "minutes" | "seconds" | null
+    unit: "hours" | "minutes" | "seconds" | null,
   ) => {
     if (!unit) return false;
     if (unit === "hours") return value >= 0 && value <= 12;
@@ -133,6 +133,7 @@ export async function extractTextFromImage(
 
   const totalSeconds = hours * 3600 + minutes * 60 + seconds;
   const task = Number(todayTasks);
+
   return {
     rawText: text.trim(),
     todaysHours,

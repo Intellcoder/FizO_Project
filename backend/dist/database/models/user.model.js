@@ -7,6 +7,8 @@ const mongoose_1 = require("mongoose");
 const validator_1 = require("validator");
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const uuid_1 = require("uuid");
+const report_model_1 = __importDefault(require("./report.model"));
+const payment_model_1 = require("./payment.model");
 const userSchema = new mongoose_1.Schema({
     workerId: {
         type: String,
@@ -50,7 +52,7 @@ const userSchema = new mongoose_1.Schema({
     },
     role: {
         type: String,
-        enum: ["worker", "admin"],
+        enum: ["worker", "admin", "client"],
         default: "worker",
     },
     verifyEmailToken: { type: String },
@@ -85,6 +87,16 @@ userSchema.methods.comparePassword = async function (password) {
     const passwordMatch = await bcryptjs_1.default.compare(password, this.password);
     return passwordMatch;
 };
+userSchema.pre("findOneAndDelete", async function (next) {
+    const user = await this.model.findOne(this.getFilter());
+    if (user) {
+        await report_model_1.default.deleteMany({
+            $or: [{ accountOwner: user._id }, { accountWorker: user._id }],
+        });
+        await payment_model_1.PaymentData.deleteMany({ accountOwner: user._id });
+    }
+    next();
+});
 const User = (0, mongoose_1.model)("User", userSchema);
 exports.default = User;
 //# sourceMappingURL=user.model.js.map

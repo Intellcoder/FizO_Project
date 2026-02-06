@@ -24,6 +24,7 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/mongoose": "^5.11.96",
     "@types/multer": "^2.0.0",
+    "@types/nodemailer": "^6.4.20",
     "@types/sharp": "^0.31.1",
     "@types/tesseract.js": "^0.0.2",
     "@types/uuid": "^10.0.0",
@@ -44,7 +45,10 @@
     "mongodb": "^6.20.0",
     "mongoose": "^8.18.1",
     "multer": "^2.0.2",
+    "mysql2": "^3.15.2",
+    "nodemailer": "^6.10.1",
     "resend": "^6.1.2",
+    "sequelize": "^6.37.7",
     "sharp": "^0.34.4",
     "string-similarity-js": "^2.1.4",
     "tesseract.js": "^6.0.1",
@@ -55,8 +59,10 @@
   "devDependencies": {
     "@types/express": "^5.0.3",
     "@types/node": "^24.5.2",
+    "@types/sequelize": "^4.28.20",
     "nodemon": "^3.1.10",
+    "sequelize-cli": "^6.6.5",
     "ts-node": "^10.9.2",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.3"
   }
 }

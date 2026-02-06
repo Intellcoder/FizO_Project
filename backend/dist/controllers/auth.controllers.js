@@ -5,32 +5,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getUser = exports.resetPassword = exports.requestPasswordReset = exports.verifyEmail = exports.login = exports.register = void 0;
 const authServices_1 = require("../services/authServices");
-const paymentServices_1 = require("../services/paymentServices");
-const mail_1 = require("utils/mail");
 const crypto_1 = __importDefault(require("crypto"));
-const user_model_1 = __importDefault(require("database/models/user.model"));
+const user_model_1 = __importDefault(require("../database/models/user.model"));
 const authServices = new authServices_1.AuthServices();
 const register = async (req, res, next) => {
     try {
-        const { email, name, password, locale } = req.body;
-        if (!email || !password || !name || !locale) {
+        const { email, name, accountName, password, locale } = req.body;
+        if (!email || !password || !name || !locale || !accountName) {
             return res.status(400).json({
                 message: "All fields are required",
             });
         }
-        {
-        }
-        const { user, token } = await authServices.registerUser(email, name, password, locale);
-        const paymentData = await (0, paymentServices_1.createPaymentData)({
-            date: new Date(),
-            accountOwner: user._id,
-            totalSeconds: 0,
-            totalAmount: 0,
-        });
+        const { user, token } = await authServices.registerUser(email, name, accountName, password, locale);
         const verifyToken = crypto_1.default.randomBytes(32).toString("hex");
         user.verifyEmailToken = verifyToken;
         await user.save();
-        await (0, mail_1.sendVerificationEmail)(user.email, user.name, verifyToken);
         res.status(201).json({
             message: "Registration successfull",
             token,
@@ -95,7 +84,6 @@ const requestPasswordReset = async (req, res) => {
         user.resetPasswordToken = resetToken;
         user.resetPasswordExpires = new Date(Date.now() + 1000 * 60 * 60 * 24);
         await user.save();
-        await (0, mail_1.sendPasswordResetEmail)(user.email, user.name, resetToken);
         res.status(200).json({ message: "Password reset email sent successfully" });
     }
     catch (error) {

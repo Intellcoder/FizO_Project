@@ -1,7 +1,6 @@
-import { timeStamp } from "console";
 import { Document, Schema, model } from "mongoose";
 
-export interface IPayment {
+export interface IPayment extends Document {
   date: Date;
   accountOwner: Schema.Types.ObjectId;
   totalSeconds: number;
@@ -12,13 +11,14 @@ const paymentModel = new Schema(
   {
     date: {
       type: Date,
-      default: Date.now(),
+      default: Date.now,
       required: true,
     },
     accountOwner: {
       type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
+      index: true,
     },
     totalSeconds: {
       type: Number,
