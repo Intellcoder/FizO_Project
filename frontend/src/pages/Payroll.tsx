@@ -1,176 +1,214 @@
-import {
-  Paper,
-  Typography,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  Grid,
-  Button,
-} from "@mui/material";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-  Legend,
-} from "recharts";
+import { useEffect, useState } from "react";
+import { Paper, Typography, Grid, Button, Container } from "@mui/material";
+import api from "../api/axiosInstance";
+import { AnimatePresence, motion } from "framer-motion";
+import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 
-const payments = [
-  { date: "2025-09-01", hours: 40, rate: 15, amount: 600, status: "Paid" },
-  { date: "2025-09-08", hours: 35, rate: 15, amount: 525, status: "Paid" },
-  { date: "2025-09-15", hours: 30, rate: 15, amount: 450, status: "Pending" },
-];
-
-const lineData = [
-  { week: "Week 1", total: 600 },
-  { week: "Week 2", total: 1125 },
-  { week: "Week 3", total: 1575 },
-];
-
-const pieData = [
-  { name: "Paid", value: 2 },
-  { name: "Pending", value: 1 },
-];
-const COLORS = ["#4CAF50", "#F44336"];
+type PaymentForm = {
+  account_name: string;
+  account_number: string;
+  bank: string;
+};
 
 export default function WorkerPaymentPage() {
-  const totalPay = payments.reduce((sum, p) => sum + p.amount, 0);
+  const { register, handleSubmit, reset } = useForm<PaymentForm>();
+  const [paymentInfo, setPaymentInfo] = useState<{
+    totalPay: number;
+    totalHours: number;
+    account_name: string;
+    account_number: string;
+    bank: string;
+  } | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [isFormOpen, setIsFormOpen] = useState(false);
+
+  const onSubmit = async (data: PaymentForm) => {
+    setLoading(true);
+    try {
+      console.log(data);
+      const res = await api.patch("/payment/accountdetails", data);
+      toast.success(res.data.message || "Account details added successfully!");
+      reset();
+      setIsFormOpen(false);
+    } catch (error: any) {
+      toast.error(
+        error.response?.data?.message || "Failed to add account details.",
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const fetchPaymentInfo = async () => {
+      try {
+        const res = await api.get("/payments/my-payments");
+        setPaymentInfo(res.data);
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchPaymentInfo();
+  }, []);
+
+  if (loading) return;
+
+  const formatTime = (seconds: number) => {
+    if (!seconds || seconds <= 0) return "0 hrs 0 mins 0 secs";
+
+    const hrs = Math.floor(seconds / 3600);
+    const mins = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+
+    return `${hrs} hr${hrs !== 1 ? "s" : ""} ${mins} min${
+      mins !== 1 ? "s" : ""
+    } ${secs} sec${secs !== 1 ? "s" : ""}`;
+  };
+
+  if (error) {
+    return (
+      <Typography color="error" textAlign="center" mt={5}>
+        {error}
+      </Typography>
+    );
+  }
+
+  if (!paymentInfo) {
+    return (
+      <Typography textAlign="center" mt={5}>
+        No payment record found.
+      </Typography>
+    );
+  }
 
   return (
-    <div style={{ padding: "2rem" }}>
+    <div style={{ padding: "2rem" }} className="min-h-screen">
       <Grid container justifyContent="space-between" alignItems="center" mb={3}>
         <Typography variant="h4" fontWeight="bold">
-          My Payments
+          My Payment Summary
         </Typography>
         <Button
           variant="contained"
           sx={{ backgroundColor: "#4153ef", borderRadius: "8px" }}
+          onClick={() => setIsFormOpen(true)}
         >
-          Download Payslip (PDF)
+          Update Payment Details
         </Button>
       </Grid>
 
-      {/* Overview Cards */}
-      <Grid container spacing={3} mb={4}>
-        <Grid>
-          <Paper sx={{ p: 3 }}>
-            <Typography>Total Accumulated Pay</Typography>
-            <Typography variant="h5" fontWeight="bold" color="#4153ef">
-              ${totalPay}
-            </Typography>
-          </Paper>
-        </Grid>
-        <Grid>
-          <Paper sx={{ p: 3 }}>
-            <Typography>Last Payment</Typography>
-            <Typography variant="h6" fontWeight="bold">
-              {payments[0].date}
-            </Typography>
-          </Paper>
-        </Grid>
-        <Grid>
-          <Paper sx={{ p: 3 }}>
-            <Typography>Pending Payments</Typography>
-            <Typography variant="h6" fontWeight="bold" color="error">
-              {payments.filter((p) => p.status === "Pending").length}
-            </Typography>
-          </Paper>
-        </Grid>
-      </Grid>
-
-      {/* Payment History Table */}
-      <Paper sx={{ mb: 4, width: "100%" }}>
-        <Table sx={{ overflow: "scroll" }}>
-          <TableHead>
-            <TableRow>
-              <TableCell>Date</TableCell>
-              <TableCell>Hours Worked</TableCell>
-              <TableCell>Rate</TableCell>
-              <TableCell>Amount</TableCell>
-              <TableCell>Status</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {payments.map((p, i) => (
-              <TableRow key={i}>
-                <TableCell>{p.date}</TableCell>
-                <TableCell>{p.hours}</TableCell>
-                <TableCell>${p.rate}</TableCell>
-                <TableCell>${p.amount}</TableCell>
-                <TableCell
-                  sx={{
-                    color:
-                      p.status === "Pending" ? "error.main" : "success.main",
-                    fontWeight: 600,
-                  }}
-                >
-                  {p.status}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </Paper>
-
-      {/* Charts */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
-        {/* Line Chart */}
-        <div className="rounded-xl">
-          <Paper sx={{ p: 3 }}>
-            <Typography fontWeight="bold" mb={2}>
-              Accumulated Pay Trend
-            </Typography>
-            <ResponsiveContainer width="100%" height={250}>
-              <LineChart data={lineData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="week" />
-                <YAxis />
-                <Tooltip />
-                <Line
-                  type="monotone"
-                  dataKey="total"
-                  stroke="#4153ef"
-                  strokeWidth={3}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </Paper>
-        </div>
-
-        {/* Pie Chart */}
+      <Grid container spacing={3}>
         <div>
           <Paper sx={{ p: 3 }}>
-            <Typography fontWeight="bold" mb={2}>
-              Payment Status
+            <Typography>Total Hours Worked</Typography>
+            <Typography variant="h5" fontWeight="bold" color="#4153ef">
+              {formatTime(paymentInfo.totalHours)}
             </Typography>
-            <ResponsiveContainer width="100%" height={250}>
-              <PieChart>
-                <Pie
-                  data={pieData}
-                  dataKey="value"
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={100}
-                  label
-                >
-                  {pieData.map((entry, index) => (
-                    <Cell key={entry.name} fill={COLORS[index]} />
-                  ))}
-                </Pie>
-                <Legend />
-              </PieChart>
-            </ResponsiveContainer>
           </Paper>
         </div>
+
+        <div>
+          <Paper sx={{ p: 3 }}>
+            <Typography>Total Pay</Typography>
+            <Typography variant="h5" fontWeight="bold" color="#4CAF50">
+              #{paymentInfo.totalPay.toFixed(2)}
+            </Typography>
+          </Paper>
+        </div>
+      </Grid>
+      <div className="md:flex justify-center md:max-w-[50%]">
+        <Container sx={{ mt: 2, mb: 2, ml: 0 }}>
+          <Paper sx={{ p: 3 }}>
+            <div className="mb-2 flex items-center">
+              <Typography>Account Name:</Typography>
+              <Typography variant="h5" fontWeight={"bold"} color="#4153ef">
+                {paymentInfo.account_name}
+              </Typography>
+            </div>
+            <div className="mt-2 mb-2 flex items-center">
+              <Typography>Account Number:</Typography>
+              <Typography variant="h5" fontWeight={"bold"} color="#4153ef">
+                {paymentInfo.account_number}
+              </Typography>
+            </div>
+            <div className="mt-2 flex items-center">
+              <Typography>Bank:</Typography>
+              <Typography variant="h6" fontWeight={"bold"} color="#4153ef">
+                {paymentInfo.bank}
+              </Typography>
+            </div>
+          </Paper>
+        </Container>
       </div>
+
+      <AnimatePresence>
+        {isFormOpen && (
+          <motion.div
+            className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-50"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsFormOpen(false)}
+          >
+            {" "}
+            <motion.div
+              onClick={(e) => e.stopPropagation()}
+              className="bg-white rounded-xl shadow-2xl w-full max-w-md p-6"
+              initial={{ scale: 0.9, opacity: 0, y: 30 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 30 }}
+              transition={{ duration: 0.3 }}
+            >
+              {" "}
+              <div className="flex justify-end">
+                {" "}
+                <button
+                  onClick={() => setIsFormOpen(false)}
+                  className="text-gray-500 text-2xl hover:text-gray-700"
+                >
+                  ×
+                </button>
+              </div>
+              <h1 className="text-lg font-bold text-gray-900 mb-4">
+                Add Payment Account Details
+              </h1>
+              <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
+                <input
+                  type="text"
+                  placeholder="Account Name"
+                  {...register("account_name", {
+                    required: "Account name is required",
+                  })}
+                  className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#4153ef]"
+                />
+                <input
+                  type="text"
+                  placeholder="Account Number"
+                  {...register("account_number", {
+                    required: "Account name is required",
+                  })}
+                  className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#4153ef]"
+                />{" "}
+                <input
+                  type="text"
+                  placeholder="bank"
+                  {...register("bank", { required: "Bank is required" })}
+                  className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#4153ef]"
+                />
+                <button
+                  type="submit"
+                  className="w-full bg-[#4153ef] text-white py-2 rounded-lg hover:bg-[#3542c8] transition"
+                >
+                  {loading ? "Loading..." : "Submit"}
+                </button>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

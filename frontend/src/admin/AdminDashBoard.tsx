@@ -9,7 +9,7 @@ import TableCard from "../components/TableCard";
 import Loader from "../components/Loader";
 
 const AdminDashBoard = () => {
-  const { loadingReports, totalTime, reports, team } = useAuth();
+  const { loadingReports, reports, team } = useAuth();
 
   let hours, minutes, sec;
 
@@ -31,6 +31,18 @@ const AdminDashBoard = () => {
     sec = seconds % 60;
     return `${hours} hrs ${minutes} mins ${sec} secs`;
   };
+
+  const workers = Array.isArray(team) ? team : [];
+
+  // 📊 Stats
+  const totalEmployees = workers.length;
+
+  const totalHours = workers.reduce(
+    (sum, w) => sum + (w.payment?.totalHours || 0),
+
+    0,
+  );
+  console.log("Team:", team);
   return (
     <>
       <div className="mb-3">
@@ -46,7 +58,7 @@ const AdminDashBoard = () => {
           <StatsCard
             title="Total Hours Worked"
             icon={<MdLockClock color="green" />}
-            value={formatSeconds(totalTime?.totalSeconds).toString()}
+            value={formatSeconds(totalHours).toString()}
           />
         </motion.div>
         <motion.div
@@ -70,7 +82,7 @@ const AdminDashBoard = () => {
           <StatsCard
             title="No of Employees"
             icon={<MdLockClock color="green" />}
-            value={team.length.toString()}
+            value={totalEmployees.toString()}
           />
         </motion.div>
         <motion.div
@@ -96,13 +108,15 @@ const AdminDashBoard = () => {
           header={["Name", "Email", "Date"]}
           rows={[...reports] // copy so original array isn’t mutated
             .sort(
-              (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+              (a, b) =>
+                new Date(b.updatedAt).getTime() -
+                new Date(a.updatedAt).getTime(),
             )
             .slice(0, 4) // only first 3
             .map((r) => [
-              r.name,
-              r.workhour, // or r.workhour if you want instead of email
-              new Date(r.date).toLocaleDateString(),
+              r.account.account_name,
+              r.todaysHour, // or r.workhour if you want instead of email
+              new Date(r.updatedAt).toLocaleDateString(),
             ])}
         />
       </div>

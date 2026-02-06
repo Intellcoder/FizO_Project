@@ -18,6 +18,8 @@ import Unauthorized from "./pages/Unauthorized";
 import SettingsPage from "./pages/Settings";
 import AdminReport from "./admin/AdminReport";
 import { Toaster } from "react-hot-toast";
+import RequestReset from "./pages/RequestReset";
+import ResetForm from "./pages/ResetForm";
 
 function App() {
   return (
@@ -55,6 +57,8 @@ function App() {
         {/* Public routes */}
         <Route path="/signup" element={<SignUp />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/reset" element={<RequestReset />} />
+        <Route path="/reset/password" element={<ResetForm />} />
         <Route path="/unauthorized" element={<Unauthorized />} />
 
         {/* Fallback */}

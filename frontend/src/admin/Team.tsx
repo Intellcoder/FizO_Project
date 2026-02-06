@@ -1,130 +1,149 @@
 import Avatar from "@mui/material/Avatar";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
-import api from "../api/axiosInstance";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import { FiMoreVertical } from "react-icons/fi";
+import api from "../api/axiosInstance";
 import { useAuth } from "../context/AuthContext";
 
 type SignUpFormInput = {
   name: string;
-  accountName: string;
+  account_name: string;
   email: string;
   password: string;
   locale: string;
-  role: "Admin" | "User" | "Client";
+  role: "Admin" | "Worker" | "Client";
   status: "Active" | "Non-Active";
 };
 
-type TeamMember = {
-  _id: string;
-  email: string;
-  name: string;
+type Payment = {
+  totalPay: number;
+  totalHours: number;
+};
+
+type Account = {
+  id: number;
+  account_name: string;
   locale: string;
-  totalSeconds: number;
+  ownerId: number;
+};
+
+type Assignment = {
+  workerId: number;
+  accountId: number;
+  type: string;
+  active: boolean;
+  startedAt: string;
+  endedAt: string;
+  account: Account;
+};
+
+type Worker = {
+  id: number;
+  name: string;
+  email: string;
   role: string;
-  status: "Active" | "Not Active";
+  workerId: string;
+  payment?: Payment;
+  accounts?: Account[];
+  assignments?: Assignment[];
 };
 
 function stringToColor(string: string) {
   let hash = 0;
-  let i;
-
-  /* eslint-disable no-bitwise */
-  for (i = 0; i < string.length; i += 1) {
+  for (let i = 0; i < string.length; i += 1) {
     hash = string.charCodeAt(i) + ((hash << 5) - hash);
   }
-
   let color = "#";
-
-  for (i = 0; i < 3; i += 1) {
+  for (let i = 0; i < 3; i += 1) {
     const value = (hash >> (i * 8)) & 0xff;
     color += `00${value.toString(16)}`.slice(-2);
   }
-  /* eslint-enable no-bitwise */
-
   return color;
 }
 
 function stringAvatar(name: string) {
   return {
-    sx: {
-      bgcolor: stringToColor(name),
-    },
+    sx: { bgcolor: stringToColor(name) },
     children: `${name.split(" ")[0][0]}`,
   };
 }
 
 const Team = () => {
   const { team, deleteProfile, refreshTeam } = useAuth();
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<SignUpFormInput>();
 
+  const { register, handleSubmit, reset } = useForm<SignUpFormInput>();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [selectedUser, setSelectedUser] = useState<TeamMember | null>(null);
-  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [selectedWorker, setSelectedWorker] = useState<Worker | null>(null);
   const [isEditOpen, setIsEditOpen] = useState(false);
-
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [isAddAccountOpen, setIsAddAccountOpen] = useState(false);
+  const [isAssignAccountOpen, setIsAssignAccountOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [newAccountName, setNewAccountName] = useState("");
+  const [newAccountLocale, setNewAccountLocale] = useState("");
+  const [selectedAccountId, setSelectedAccountId] = useState<number | null>(
+    null
+  );
+  const [expandedAccounts, setExpandedAccounts] = useState<number | null>(null);
+  // 🔹 Add Team Member
   const onSubmit = async (data: SignUpFormInput) => {
     setLoading(true);
     try {
-      const res = await api.post("/auth/register", data);
-
-      //store token if available
-      // localStorage.setItem("token", res.data.token);
-      // localStorage.setItem("user", JSON.stringify(res.data.user));
-
-      toast.success(res.data.message || "Team member added sucessfully!");
-      setLoading(false);
-      setIsModalOpen(false);
+      const res = await api.post("/worker/auth/register", data);
+      toast.success(res.data.message || "Team member added successfully!");
       refreshTeam();
-      // Wait 2.5s before redirect
-      // setTimeout(() => {
-      //   //redirect to home page
-      //   navigate("/login");
-      // }, 3000);
+      setIsModalOpen(false);
+      reset();
     } catch (error: any) {
-      const errorMsg =
-        error.response?.data?.message ||
-        "Something went wrong,Please try again.";
-      toast.error(errorMsg);
+      toast.error(
+        error.response?.data?.message || "Failed to add team member."
+      );
+    } finally {
       setLoading(false);
-      setIsModalOpen(false);
     }
   };
 
-  //delete modal
-
-  //delete userProfile
+  // 🔹 Delete Member
   const handleDelete = async () => {
-    if (!selectedUser) return;
+    if (!selectedWorker) return;
     try {
-      deleteProfile(selectedUser._id);
-      setIsDeleteOpen(false);
+      await deleteProfile(selectedWorker.id);
       refreshTeam();
-    } catch (error) {
-      toast.error("Failed to Delete worker");
+      setIsDeleteOpen(false);
+    } catch {
+      toast.error("Failed to delete worker.");
     }
   };
 
-  //handle Edit user details
-  const handleEdit = async () => {
-    if (!selectedUser) return;
+  // 🔹 Edit Member
+  const handleEdit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedWorker) return;
     setLoading(true);
     try {
-    } catch (error) {}
+      await api.put(`/admin/updateUser/${selectedWorker.id}`, selectedWorker);
+      toast.success("Worker details updated.");
+      refreshTeam();
+      setIsEditOpen(false);
+    } catch (error: any) {
+      toast.error("Failed to update worker.");
+    } finally {
+      setLoading(false);
+    }
   };
 
+  console.log(team);
   return (
     <div className="p-6 h-screen">
+      {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Team Members</h1>
-          <p>Manage your team and their access levels</p>
+          <p className="text-gray-600">
+            Manage your team and their access levels
+          </p>
         </div>
         <button
           onClick={() => setIsModalOpen(true)}
@@ -133,309 +152,222 @@ const Team = () => {
           + Add Member
         </button>
       </div>
-      <div className=" hidden md:block">
+      {/* Desktop Table */}
+      <div className="hidden md:block">
         <table className="w-full border border-gray-200 rounded-lg overflow-hidden">
-          <thead className="bg-gray-50  mb-3">
-            <tr style={{ marginBottom: "2rem" }}>
+          <thead className="bg-gray-50 w-full">
+            <tr>
               <th className="px-4 py-2 text-left">Name</th>
-              <th className="px-4 py-2 ">Locale</th>
-              <th className="px-4 py-2 ">Role</th>
-              <th className="px-4 py-2 ">Email</th>
+              <th className="px-4 py-2">Role</th>
+              <th className="px-4 text-center py-2">Email</th>
+              <th className="px-4 py-2">Account Details</th>
               <th className="px-4 py-2 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="mt-3">
+          <tbody>
             {team.map((member) => (
-              <tr
-                key={member.name}
-                className="hover:bg-gray-50 transition mt-3 pt-3"
-              >
+              <tr key={member.id} className="hover:bg-gray-50 transition">
                 <td className="px-4 py-3 flex items-center gap-3">
                   <Avatar {...stringAvatar(member.name)} />
-
                   <span>{member.name}</span>
                 </td>
-                <td className="px-4 py-3">{member.locale}</td>
+                <td className="px-4 py-3"></td>
                 <td className="px-4 py-3">{member.role}</td>
                 <td className="px-4 py-3">{member.email}</td>
                 <td className="px-4 py-3">
-                  <span
-                    className={`px-2 py-1 text-xs font-medium rounded-full ${
-                      member.status === "Active"
-                        ? "bg-green-100 text-green-700"
-                        : "bg-red-100 text-red-700"
-                    }`}
+                  <button
+                    onClick={() =>
+                      setExpandedAccounts(
+                        expandedAccounts === member.id ? null : member.id
+                      )
+                    }
+                    className="px-2 py-1 border rounded hover:bg-gray-100 text-sm"
                   >
-                    {member.status}
-                  </span>
+                    {member.accounts?.length
+                      ? `${member.accounts[0]?.account_name}...`
+                      : "-"}
+                  </button>
+
+                  {expandedAccounts === member.id && member.accounts && (
+                    <div className="absolute mt-1 bg-gray-50 border border-gray-200 rounded-md p-2 z-50">
+                      {member.accounts.map((assign) => (
+                        <div
+                          key={assign.id}
+                          className="flex justify-between items-center px-2 py-1 hover:bg-gray-100 rounded"
+                        >
+                          <span className="font-medium mr-1">
+                            {assign?.account_name}
+                          </span>
+                          <span className="text-gray-500 text-sm">
+                            {assign?.locale}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </td>
-                <td className="px-4 py-3 text-right">
+                <td className="px-4 py-3 text-right relative">
                   <button
-                    onClick={() => {
-                      setSelectedUser(member);
-                      setIsEditOpen(true);
-                    }}
-                    className="text-sm text-primary hover:underline mr-3"
+                    onClick={() =>
+                      setSelectedWorker(
+                        selectedWorker?.id === member.id ? null : member
+                      )
+                    }
+                    className="p-1 rounded-full hover:bg-gray-100"
                   >
-                    Edit
+                    <FiMoreVertical size={18} />
                   </button>
-                  <button
-                    onClick={() => {
-                      setSelectedUser(member);
-                      setIsDeleteOpen(true);
-                    }}
-                    className="text-sm text-red-500 hover:underline"
-                  >
-                    Remove
-                  </button>
+                  {selectedWorker?.id === member.id && (
+                    <div className="relative right-0   mt-2 w-44   bg-white border border-gray-200 rounded-md shadow-lg z-50 ">
+                      <button
+                        onClick={() => setIsAddAccountOpen(true)}
+                        className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      >
+                        Add New Account
+                      </button>
+                      <button
+                        onClick={() => setIsAssignAccountOpen(true)}
+                        className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      >
+                        Assign Existing Account
+                      </button>
+                      <button
+                        onClick={() => setIsEditOpen(true)}
+                        className="block w-full text-left px-4 py-2 text-sm text-blue-600 hover:bg-gray-100"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => setIsDeleteOpen(true)}
+                        className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  )}
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-      {/*mobile card*/}
-      <div className="grid grid-cols-1 gap-4 md:hidden">
-        {team.map((member) => (
-          <motion.div
-            key={member._id}
-            className="bg-white border border-gray-200 rounded-lg shadow-sm p-4 flex flex-col"
-            whileHover={{ scale: 1.02 }}
-          >
-            <div className="flex items-center gap-3 mb-3">
-              <div>
-                <h1 className="font-semibold text-gray-900">{member.name}</h1>
-                <p className="text-sm text-gray-500">{member.role}</p>
-              </div>
-              <div className="mb-2">
-                <div className="mb-2">
-                  <p className="text-sm text-gray-500">{member.email}</p>
-                  <p className="text-sm text-gray-500">{member.locale}</p>
-                </div>
-                <div className="flex gap-4">
-                  <span
-                    className={`mt-2 w-fit px-2 py-1 text-xs font-medium rounded-full ${
-                      member.status === "Active"
-                        ? "bg-green-100 text-green-700"
-                        : "bg-red-100 text-red-700"
-                    }`}
-                  >
-                    {member.status}
-                  </span>
-                  <div className="flex gap-4 mt-4">
-                    <button
-                      onClick={() => {
-                        setSelectedUser(member);
-                        setIsEditOpen(true);
-                      }}
-                      className="text-sm text-primary hover:underline"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => {
-                        setSelectedUser(member);
-                        setIsDeleteOpen(true);
-                      }}
-                      className="text-sm text-red-500 hover:underline"
-                    >
-                      Remove
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        ))}
-      </div>
-      {/*Animated modal*/}
-
+      {/* Add Member Modal */}{" "}
       <AnimatePresence>
         {isModalOpen && (
           <motion.div
-            className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-0"
+            className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-50"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setIsModalOpen(false)}
           >
-            {/*backdrop*/}
+            {" "}
             <motion.div
-              className="bg-white rounded-xl shadow-2xl w-full max-w-md animate- z-0"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 0.5 }}
-              exit={{ opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
+              className="bg-white rounded-xl shadow-2xl w-full max-w-md p-6"
+              initial={{ scale: 0.9, opacity: 0, y: 30 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 30 }}
+              transition={{ duration: 0.3 }}
             >
-              {/*modal card*/}
-              <motion.div
-                // onClick={() => setIsModalOpen()}
-                className="bg-white rounded-xl p-6 shadow-2xl w-full max-w-md animate-fadeIn z-1"
-                initial={{ scale: 0.9, opacity: 0, y: 30 }}
-                animate={{ scale: 1, opacity: 1, y: 0 }}
-                exit={{ scale: 0.9, opacity: 0, y: 30 }}
-                transition={{ duration: 0.3, ease: "easeInOut" }}
-                onClick={(e) => e.stopPropagation()}
-              >
-                <div className="flex justify-end">
-                  <button
-                    onClick={() => setIsModalOpen(false)}
-                    className="text-gray-500 text-2xl hover:text-gray-700"
-                  >
-                    x
-                  </button>
-                </div>
-                <h1 className="text-lg font-bold text-gray-900 mb-4">
-                  Add Team Member
-                </h1>
-                <form
-                  className="space-y-4 bg-white z-10"
-                  onSubmit={handleSubmit(onSubmit)}
+              {" "}
+              <div className="flex justify-end">
+                {" "}
+                <button
+                  onClick={() => setIsModalOpen(false)}
+                  className="text-gray-500 text-2xl hover:text-gray-700"
                 >
-                  <div className="flex flex-col">
-                    <input
-                      type="text"
-                      placeholder="Full Name"
-                      {...register("name", { required: "Name is required" })}
-                      className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#4153ef] outline-none"
-                      required
-                    />
-                    {errors.name && (
-                      <p className="text-red-500 text-sm ">
-                        {errors.name.message}
-                      </p>
-                    )}
-                  </div>
-                  <div className="flex flex-col">
-                    <input
-                      type="text"
-                      placeholder="AccountName"
-                      {...register("accountName", {
-                        required: "accountName is required",
-                      })}
-                      className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#4153ef] outline-none"
-                      required
-                    />
-                    {errors.accountName && (
-                      <p className="text-red-500 text-sm ">
-                        {errors.accountName.message}
-                      </p>
-                    )}
-                  </div>
-                  <div className="flex flex-col">
-                    <input
-                      type="email"
-                      placeholder="Email"
-                      {...register("email", { required: "Email is required" })}
-                      className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#4153ef] outline-none"
-                      required
-                    />
-                    {errors.email && (
-                      <p className="text-red-500 text-sm ">
-                        {errors.email.message}
-                      </p>
-                    )}
-                  </div>
-                  <div className="flex flex-col">
-                    <input
-                      type="text"
-                      placeholder="Password"
-                      {...register("password", {
-                        required: "Password is required",
-                      })}
-                      className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#4153ef] outline-none"
-                      required
-                    />
-                    {errors.password && (
-                      <p className="text-red-500 text-sm ">
-                        {errors.password.message}
-                      </p>
-                    )}
-                  </div>
-                  <div>
-                    <select
-                      {...register("role", {
-                        required: "role is required",
-                      })}
-                      className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#4153ef] outline-none"
-                    >
-                      <option>Admin</option>
-                      <option>Worker</option>
-                      <option>Client</option>
-                    </select>
-                    {errors.role && (
-                      <p className="text-red-500 text-sm ">
-                        {errors.role.message}
-                      </p>
-                    )}
-                  </div>
-                  <div className="flex flex-col">
-                    <input
-                      type="text"
-                      placeholder="locale"
-                      {...register("locale", {
-                        required: "locale is required",
-                      })}
-                      className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#4153ef] outline-none"
-                      required
-                    />
-                    {errors.locale && (
-                      <p className="text-red-500 text-sm ">
-                        {errors.locale.message}
-                      </p>
-                    )}
-                    {/* <select
-                      {...register("locale", {
-                        required: "status is required",
-                      })}
-                      className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#4153ef] outline-none"
-                    >
-                      <option>Active</option>
-                      <option>Inactive</option>
-                    </select>
-                    {errors.status && (
-                      <p className="text-red-500 text-sm ">
-                        {errors.status.message}
-                      </p>
-                    )} */}
-                  </div>
-                  <button
-                    type="submit"
-                    className="w-full bg-[#4153ef] text-white py-2 rounded-lg hover:bg-[#3542c8] transition"
-                  >
-                    {loading ? (
-                      <span className="roundef-full ">Loading..</span>
-                    ) : (
-                      "Add Member"
-                    )}
-                  </button>
-                </form>
-              </motion.div>
-            </motion.div>
+                  {" "}
+                  ×{" "}
+                </button>{" "}
+              </div>{" "}
+              <h1 className="text-lg font-bold text-gray-900 mb-4">
+                {" "}
+                Add Team Member{" "}
+              </h1>{" "}
+              <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
+                {" "}
+                <input
+                  type="text"
+                  placeholder="Full Name"
+                  {...register("name", { required: "Name is required" })}
+                  className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#4153ef]"
+                />{" "}
+                <input
+                  type="text"
+                  placeholder="Account Name"
+                  {...register("account_name", {
+                    required: "Account name is required",
+                  })}
+                  className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#4153ef]"
+                />{" "}
+                <input
+                  type="email"
+                  placeholder="Email"
+                  {...register("email", { required: "Email is required" })}
+                  className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#4153ef]"
+                />{" "}
+                <input
+                  type="password"
+                  placeholder="Password"
+                  {...register("password", {
+                    required: "Password is required",
+                  })}
+                  className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#4153ef]"
+                />{" "}
+                <select
+                  {...register("role", { required: "Role is required" })}
+                  className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#4153ef]"
+                >
+                  {" "}
+                  <option>Admin</option> <option>Worker</option>{" "}
+                  <option>Client</option>{" "}
+                </select>{" "}
+                <input
+                  type="text"
+                  placeholder="Locale"
+                  {...register("locale", { required: "Locale is required" })}
+                  className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#4153ef]"
+                />{" "}
+                <button
+                  type="submit"
+                  className="w-full bg-[#4153ef] text-white py-2 rounded-lg hover:bg-[#3542c8] transition"
+                >
+                  {" "}
+                  {loading ? "Loading..." : "Add Member"}{" "}
+                </button>{" "}
+              </form>{" "}
+            </motion.div>{" "}
           </motion.div>
-        )}
+        )}{" "}
       </AnimatePresence>
-
-      {/* 🔹 Delete Confirmation */}
+      {/* Delete Confirmation Modal */}{" "}
       <AnimatePresence>
-        {isDeleteOpen && selectedUser && (
+        {isDeleteOpen && selectedWorker && (
           <motion.div
             className="fixed inset-0 flex items-center justify-center bg-black/50 z-50"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
+            {" "}
             <motion.div
               className="bg-white p-6 rounded-xl w-full max-w-sm text-center"
               initial={{ scale: 0.9 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0.9 }}
             >
-              <h2 className="text-lg font-bold mb-4">Delete this worker </h2>
+              {" "}
+              <h2 className="text-lg font-bold mb-4">
+                {" "}
+                Delete {selectedWorker.name}?{" "}
+              </h2>{" "}
               <p className="mb-6 text-gray-600">
-                This action cannot be undone.
-              </p>
+                {" "}
+                This action cannot be undone.{" "}
+              </p>{" "}
               <div className="flex justify-center gap-4">
+                {" "}
                 <button
                   onClick={() => setIsDeleteOpen(false)}
                   className="px-4 py-2 bg-gray-200 rounded"
@@ -453,16 +385,17 @@ const Team = () => {
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* 🔹 Edit Modal */}
+      {/* Edit Modal */}{" "}
       <AnimatePresence>
-        {isEditOpen && selectedUser && (
+        {" "}
+        {isEditOpen && selectedWorker && (
           <motion.div
             className="fixed inset-0 flex items-center justify-center bg-black/50 z-50"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
+            {" "}
             <motion.form
               onSubmit={handleEdit}
               className="bg-white p-6 rounded-xl w-full max-w-md"
@@ -470,42 +403,42 @@ const Team = () => {
               animate={{ scale: 1 }}
               exit={{ scale: 0.9 }}
             >
-              <h2 className="text-lg font-bold mb-4">Edit Report</h2>
+              {" "}
+              <h2 className="text-lg font-bold mb-4">Edit Worker</h2>{" "}
               <input
                 type="text"
-                value={selectedUser.name}
+                value={selectedWorker.name}
                 onChange={(e) =>
-                  setSelectedUser({ ...selectedUser, name: e.target.value })
+                  setSelectedWorker({ ...selectedWorker, name: e.target.value })
                 }
                 className="w-full border rounded px-3 py-2 mb-3"
-              />
+              />{" "}
               <input
                 type="text"
-                value={selectedUser.email}
+                value={selectedWorker.email}
                 onChange={(e) =>
-                  setSelectedUser({ ...selectedUser, email: e.target.value })
-                }
-                className="w-full border rounded px-3 py-2 mb-3"
-              />
-              <input
-                type="text"
-                value={selectedUser.locale}
-                onChange={(e) =>
-                  setSelectedUser({
-                    ...selectedUser,
-                    locale: e.target.value,
+                  setSelectedWorker({
+                    ...selectedWorker,
+                    email: e.target.value,
                   })
                 }
                 className="w-full border rounded px-3 py-2 mb-3"
+              />{" "}
+              <input
+                type="text"
+                value={selectedWorker.accounts?.map((a) => a.locale)}
+                onChange={() => setSelectedWorker({ ...selectedWorker })}
+                className="w-full border rounded px-3 py-2 mb-3"
               />
               <select
-                name="role"
-                id="role"
-                className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#4153ef] outline-none"
+                value={selectedWorker.role}
+                onChange={(e) =>
+                  setSelectedWorker({ ...selectedWorker, role: e.target.value })
+                }
+                className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#4153ef]"
               >
-                <option value="admin">Admin</option>
-                <option value="worker"> Worker</option>
-                <option value="client">Client</option>
+                <option>Admin</option> <option>Worker</option>
+                <option>Client</option>
               </select>
               <div className="flex justify-end gap-3 mt-5">
                 <button
@@ -513,19 +446,229 @@ const Team = () => {
                   onClick={() => setIsEditOpen(false)}
                   className="px-4 py-2 bg-gray-200 rounded"
                 >
-                  Cancel
-                </button>
+                  {" "}
+                  Cancel{" "}
+                </button>{" "}
                 <button
                   type="submit"
                   className="px-4 py-2 bg-blue-600 text-white rounded"
                 >
-                  Save
-                </button>
+                  {" "}
+                  {loading ? "Saving..." : "Save"}{" "}
+                </button>{" "}
+              </div>{" "}
+            </motion.form>{" "}
+          </motion.div>
+        )}{" "}
+      </AnimatePresence>
+      {/* Mobile Cards */}
+      <div className="grid grid-cols-1 gap-4 md:hidden">
+        {team.map((member) => (
+          <motion.div
+            key={member.id}
+            className="bg-white border border-gray-200 rounded-lg shadow-sm p-4 flex flex-col"
+            whileHover={{ scale: 1.02 }}
+          >
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-3">
+                <Avatar {...stringAvatar(member.name)} />
+                <div>
+                  <h1 className="font-semibold text-gray-900">{member.name}</h1>
+                  <p className="text-sm text-gray-500">{member.role}</p>
+                </div>
               </div>
-            </motion.form>
+              <button
+                onClick={() =>
+                  setSelectedWorker(
+                    selectedWorker?.id === member.id ? null : member
+                  )
+                }
+                className="p-1 rounded-full hover:bg-gray-100"
+              >
+                <FiMoreVertical size={18} />
+              </button>
+              {selectedWorker?.id === member.id && (
+                <div className=" mt-10 w-44 bg-white border border-gray-200 rounded-md shadow-lg z-50">
+                  <button
+                    onClick={() => setIsAddAccountOpen(true)}
+                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    Add New Account
+                  </button>
+                  <button
+                    onClick={() => setIsAssignAccountOpen(true)}
+                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    Assign Existing Account
+                  </button>
+                  <button
+                    onClick={() => setIsEditOpen(true)}
+                    className="block w-full text-left px-4 py-2 text-sm text-blue-600 hover:bg-gray-100"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => setIsDeleteOpen(true)}
+                    className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                  >
+                    Remove
+                  </button>
+                </div>
+              )}
+            </div>
+            <p className="text-sm text-gray-600">{member.email}</p>
+            <p className="text-sm text-gray-600">
+              <span className="text-black">Accounts:</span>{" "}
+              {member.accounts?.map((a) => a.account_name).join(", ") || "-"}
+            </p>
+          </motion.div>
+        ))}
+      </div>
+      {/* Add Account Modal */}
+      <AnimatePresence>
+        {isAddAccountOpen && selectedWorker && (
+          <motion.div
+            className="fixed inset-0 flex items-center justify-center bg-black/50 z-50"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className="bg-white p-6 rounded-xl w-full max-w-md"
+              initial={{ scale: 0.9, opacity: 0, y: 30 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 30 }}
+            >
+              <h2 className="text-lg font-bold mb-4">
+                Add Account for {selectedWorker.name}
+              </h2>
+              <form
+                className="space-y-4"
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  if (!selectedWorker) return;
+                  try {
+                    await api.post("/worker/account", {
+                      workerId: selectedWorker.id,
+                      ownerId: selectedWorker.id,
+                      account_name: newAccountName,
+                      locale: newAccountLocale,
+                    });
+                    toast.success("Account created successfully");
+                    setIsAddAccountOpen(false);
+                    refreshTeam();
+                  } catch {
+                    toast.error("Failed to create account");
+                  }
+                }}
+              >
+                <input
+                  type="text"
+                  placeholder="Account Name"
+                  value={newAccountName}
+                  onChange={(e) => setNewAccountName(e.target.value)}
+                  className="w-full border rounded px-3 py-2"
+                />
+                <input
+                  type="text"
+                  placeholder="Locale"
+                  value={newAccountLocale}
+                  onChange={(e) => setNewAccountLocale(e.target.value)}
+                  className="w-full border rounded px-3 py-2"
+                />
+                <div className="flex justify-end gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setIsAddAccountOpen(false)}
+                    className="px-4 py-2 bg-gray-200 rounded"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-4 py-2 bg-blue-600 text-white rounded"
+                  >
+                    Add
+                  </button>
+                </div>
+              </form>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
+      {/* Assign Account Modal */}
+      <AnimatePresence>
+        {isAssignAccountOpen && selectedWorker && (
+          <motion.div
+            className="fixed inset-0 flex items-center justify-center bg-black/50 z-50"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className="bg-white p-6 rounded-xl w-full max-w-md"
+              initial={{ scale: 0.9, opacity: 0, y: 30 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 30 }}
+            >
+              <h2 className="text-lg font-bold mb-4">
+                Assign Account to {selectedWorker.name}
+              </h2>
+              <form
+                className="space-y-4"
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  if (!selectedWorker || !selectedAccountId) return;
+                  try {
+                    console.log("assinging account");
+                    await api.post("/worker/assingaccount", {
+                      newOwnerId: selectedWorker.id,
+                      accountId: selectedAccountId,
+                    });
+                    console.log("tryiing assign account");
+                    toast.success("Account assigned successfully");
+                    setIsAssignAccountOpen(false);
+                    refreshTeam();
+                  } catch {
+                    toast.error("Failed to assign account");
+                  }
+                }}
+              >
+                <select
+                  value={selectedAccountId || ""}
+                  onChange={(e) => setSelectedAccountId(Number(e.target.value))}
+                  className="w-full border rounded px-3 py-2"
+                >
+                  <option value="">Select Account</option>
+                  {team
+                    .flatMap((w) => w.accounts || [])
+                    .map((acct) => (
+                      <option key={acct.id} value={acct.id}>
+                        {acct.account_name} ({acct.locale})
+                      </option>
+                    ))}
+                </select>
+                <div className="flex justify-end gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setIsAssignAccountOpen(false)}
+                    className="px-4 py-2 bg-gray-200 rounded"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-4 py-2 bg-blue-600 text-white rounded"
+                  >
+                    Assign
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      {/* Delete & Edit Modals remain unchanged */}
     </div>
   );
 };

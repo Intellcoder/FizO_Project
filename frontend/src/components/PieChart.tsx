@@ -34,11 +34,14 @@ export default function ReportsPieChart() {
 
   // 🔹 Aggregate reports into chart data
   const data = reports.reduce((acc: any[], report) => {
-    const existing = acc.find((d) => d.name === report.locale);
+    const existing = acc.find((d) => d.name === report.account.account_name);
     if (existing) {
-      existing.value += report.totalSeconds || 0;
+      existing.value += report.workHours || 0;
     } else {
-      acc.push({ name: report.locale, value: report.totalSeconds || 0 });
+      acc.push({
+        name: report.account.account_name,
+        value: report.workHours || 0,
+      });
     }
     return acc;
   }, []);

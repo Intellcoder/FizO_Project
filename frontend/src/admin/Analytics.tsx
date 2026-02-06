@@ -32,13 +32,13 @@ const Analytics = () => {
   // Chart Data
   // Transform reports → bar chart data
   const barData = reports.reduce((acc: any[], report) => {
-    const existing = acc.find((d) => d.name === report.name);
+    const existing = acc.find((d) => d.name === report.account.account_name);
     if (existing) {
-      existing.value += (report.totalSeconds || 0) / 3600; // convert to hours
+      existing.value += (report.workHours || 0) / 3600; // convert to hours
     } else {
       acc.push({
-        name: report.name,
-        value: (report.totalSeconds || 0) / 3600,
+        name: report.account.account_name,
+        value: (report.workHours || 0) / 3600,
       });
     }
     return acc;
@@ -47,11 +47,11 @@ const Analytics = () => {
   const statusData = [
     {
       name: "Not Outsourced",
-      value: reports.filter((r) => r.isOutsourced === true).length,
+      value: reports.filter((r) => r.workHours),
     },
     {
       name: "Outsourced",
-      value: reports.filter((r) => r.isOutsourced === false).length,
+      value: reports.filter((r) => r.workHours),
     },
   ];
 

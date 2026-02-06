@@ -32,9 +32,9 @@ const Analytics = () => {
       </div>
     );
 
-      if (!reports || reports.length === 0) {
+  if (!reports || reports.length === 0) {
     return (
-      <div className="p-6">
+      <div className="p-6 min-h-screen">
         <h1 className="text-2xl font-bold mb-4">Analytics</h1>
         <div className="text-gray-500 text-center py-20 border rounded-lg">
           No report data available yet.
@@ -43,39 +43,37 @@ const Analytics = () => {
     );
   }
 
-  const today=new Date();
-  const sevenDaysAgo=new Date();
-  sevenDaysAgo.setDate(today.getDate()-7);
-  
-    const trendData = reports
-  .filter((r) => new Date(r.date) >= sevenDaysAgo) // only keep last 7 days
-  .map((r) => ({
-    date: new Date(r.date).toLocaleDateString(),
-    hour: r.totalSeconds,
-  }));
+  const today = new Date();
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(today.getDate() - 7);
 
+  const trendData = reports
+    .filter((r) => new Date(r.updatedAt) >= sevenDaysAgo) // only keep last 7 days
+    .map((r) => ({
+      date: new Date(r.updatedAt).toLocaleDateString(),
+      hour: r.workHours,
+    }));
 
   const COLORS = ["#4CAF50", "#F44336"];
   // Transform reports → bar chart data
-   const barData = reports.map((r) => ({
-    date: new Date(r.date).toLocaleDateString(),
-    value: (r.totalSeconds || 0) / 3600, // convert seconds → hours
+  const barData = reports.map((r) => ({
+    date: new Date(r.updatedAt).toLocaleDateString(),
+    value: (r.workHours || 0) / 3600, // convert seconds → hours
   }));
 
-   const statusData = [
+  const statusData = [
     {
       name: "Outsourced",
-      value: reports.filter((r) => r.isOutsourced === true).length,
+      value: reports.length,
     },
     {
       name: "Not Outsourced",
-      value: reports.filter((r) => r.isOutsourced === false).length,
+      value: 30,
     },
   ];
 
-
   return (
-    <div className="p-6 space-y-8">
+    <div className="p-6 space-y-8 min-h-screen">
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}

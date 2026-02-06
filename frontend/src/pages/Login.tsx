@@ -25,9 +25,12 @@ const Login = () => {
 
   const onSubmit = async (data: LoginFormInputs) => {
     setLoading(true);
-
+    console.log("Loggin....");
     try {
-      const res = await api.post("/auth/login", data);
+      console.log("running...");
+      const res = await api.post("/worker/auth/login", data);
+      console.log("Data:", data);
+      console.log(res);
 
       if (!res.data?.token) {
         toast.error("Login failed: Token not received");
@@ -37,14 +40,14 @@ const Login = () => {
 
       // store token & user
       localStorage.setItem("token", res.data.token);
-      localStorage.setItem("user", JSON.stringify(res.data.user));
+      localStorage.setItem("user", JSON.stringify(res.data.worker));
 
-      setUser(res.data.user);
+      setUser(res.data.worker);
       toast.success("Login successful!", { duration: 2000 });
       setLoading(false);
 
       // Redirect based on role
-      const role = res.data.user?.role;
+      const role = res.data.worker?.role;
       if (role === "admin") {
         navigate("/admin", { replace: true });
       } else if (role === "worker") {
@@ -58,9 +61,12 @@ const Login = () => {
       const errorMsg =
         error.response?.data?.message ||
         "Something went wrong, please try again.";
+      console.log(error.response);
       toast.error(errorMsg);
       setLoading(false);
     }
+
+    console.log("Hello...");
   };
 
   return (
@@ -122,7 +128,7 @@ const Login = () => {
             <div className="pt-5 text-end">
               <h1>
                 Forgot password{" "}
-                <Link className="text-primary font-bold" to={"/signup"}>
+                <Link className="text-primary font-bold" to={"/reset"}>
                   Reset Password
                 </Link>
               </h1>

@@ -14,8 +14,11 @@ const LineChart = () => {
 
   // 🔹 Transform reports → { date, hours }
   const trendData = reports.map((r) => ({
-    date: new Date(r.date).toLocaleDateString(), // format date
-    hours: (r.totalSeconds || 0) / 3600, // convert seconds → hours
+    date: new Date(r.updatedAt).toLocaleDateString("en-Us", {
+      month: "short",
+      day: "numeric",
+    }), // format date
+    hours: (r.workHours || 0) / 3600, // convert seconds → hours
   }));
 
   return (

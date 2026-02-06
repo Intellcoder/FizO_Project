@@ -45,7 +45,7 @@ const Header = () => {
         </span>
         <Typography sx={{ fontWeight: 500, fontSize: "2rem" }}>
           <span className="text-[20px] md:text-3xl">FizO</span>
-          <span className="text-primary text-sm md:text-3xl">Taggers</span>
+          <span className="text-primary text-sm md:text-3xl"> Taggers</span>
         </Typography>
       </div>
       <div className="flex  justify-between xl:w-[40%]  md:w-[60%]">
